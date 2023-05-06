@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Give - Tipping Plugin
  * Plugin URI: https://github.com/beyond88/give-tipping
- * Description: The most robust, flexible, and intuitive way to accept donations on WordPress.
+ * Description: This plugin enables the platform to receive and process tips from donors.
  * Author: Mohiuddin Abdul Kader
  * Author URI: https://github.com/beyond88/give-tipping/
  * Version: 1.0.0

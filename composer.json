@@ -1,0 +1,13 @@
+{
+  "name": "kaderdev/give-tipping",
+  "description": "This plugin enables the platform to receive and process tips from donors.",
+  "type": "project",
+  "license": "GPLv2",
+  "autoload": {
+    "psr-4": {
+      "kaderdev\\GiveTipping\\": "includes/"
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {}
+}

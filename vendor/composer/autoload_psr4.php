@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'kaderdev\\GiveTipping\\' => array($baseDir . '/includes'),
+    'Give_Tipping\\' => array($baseDir . '/includes'),
 );

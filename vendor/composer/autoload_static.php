@@ -6,15 +6,19 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit576fd924f6256d6e2e5710266762affe
 {
+    public static $files = array (
+        '68419ddbe7b27b7deaaaa5a81ce6cd9f' => __DIR__ . '/../..' . '/includes/functions.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
-        'k' => 
+        'G' => 
         array (
-            'kaderdev\\GiveTipping\\' => 21,
+            'Give_Tipping\\' => 13,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'kaderdev\\GiveTipping\\' => 
+        'Give_Tipping\\' => 
         array (
             0 => __DIR__ . '/../..' . '/includes',
         ),

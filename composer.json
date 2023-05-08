@@ -5,8 +5,11 @@
   "license": "GPLv2",
   "autoload": {
     "psr-4": {
-      "kaderdev\\GiveTipping\\": "includes/"
-    }
+      "Give_Tipping\\": "includes/"
+    },
+    "files": [
+      "includes/functions.php"
+    ]
   },
   "minimum-stability": "dev",
   "require": {}

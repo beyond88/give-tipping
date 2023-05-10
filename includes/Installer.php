@@ -1,7 +1,5 @@
 <?php
-
 namespace Give_Tipping;
-use Give_Tipping\Helpers;
 
 /**
  * Installer class

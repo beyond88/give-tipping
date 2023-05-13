@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Give - Tipping Plugin
+ * Plugin Name: Give - Tipping
  * Plugin URI: https://github.com/beyond88/give-tipping
  * Description: This plugin enables the platform to receive and process tips from donors.
  * Author: Mohiuddin Abdul Kader

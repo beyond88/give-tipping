@@ -20,8 +20,8 @@ class Menu {
 
         $hook = add_submenu_page(
             'edit.php?post_type=give_forms',
-            __( 'Tips', 'give-tipping' ),
-            __( 'Tips', 'give-tipping' ),
+            __( 'Tipping', 'give-tipping' ),
+            __( 'Tipping', 'give-tipping' ),
             'manage_options',
             'give-tipping',
             [ $this, 'give_tipping_callback' ]
@@ -32,7 +32,15 @@ class Menu {
     }
 
     public function give_tipping_callback() {
-        echo "Hello world";
+        
+        $template = __DIR__ . '/views/settings.php';
+
+        if( file_exists( $template ) ) {
+            require_once $template;
+        } else {
+            echo $error = __('Settings page missing', 'give-tipping');
+        }
+
     }
 
     /**

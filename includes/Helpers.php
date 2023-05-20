@@ -22,7 +22,10 @@ class Helpers {
     * Default option
     *
     */
-    public static $_defaultOptions = [];
+    public static $_defaultOptions = [
+        'tipping_type' => 'amount',
+        'give_tipping_amount' => []
+    ];
 
     /**
 	 * Get settings value

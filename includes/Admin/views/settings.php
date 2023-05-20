@@ -17,9 +17,10 @@
                             </label>
                         </th>
                         <td class="">
+                            <?php $type = $settings['tipping_type']; ?>
                             <select name="gt_settings[tipping_type]" id="give_tipping_type" class="">
-                                <option value="amount"><?php echo __('Fixed Amount', 'give-tipping'); ?></option>
-                                <option value="percentage"><?php echo __('Percentage', 'give-tipping'); ?></option>
+                                <option value="amount" <?php if( $type == 'amount'){ echo "selected"; } ?>><?php echo __('Fixed Amount', 'give-tipping'); ?></option>
+                                <option value="percentage" <?php if( $type == 'percentage'){ echo "selected"; } ?>><?php echo __('Percentage', 'give-tipping'); ?></option>
                             </select>
                             <div class="give-field-description"></div>
                         </td>

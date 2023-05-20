@@ -20,7 +20,10 @@ class Menu {
     * Default option
     *
     */
-    public $_defaultOptions = [];
+    public $_defaultOptions = [
+        'tipping_type' => 'amount',
+        'give_tipping_amount' => []
+    ];
 
     /**
      * Initialize the class

@@ -2,7 +2,7 @@
 
 <div class="wrap">
     <h1 id="give-subscription-list-h1" class="wp-heading-inline">
-        <?php echo __('Tipping',''); ?>
+        <?php echo __('Tipping','give-tipping'); ?>
     </h1>
 
     <div class="nav-tab-wrapper give-nav-tab-wrapper">
@@ -37,7 +37,7 @@
                                     <tbody id="gt-append_body" class="ui-sortable">
                                         <?php
                                             $amount = [];
-                                            if( isset($settings['give_tipping_amount']) ){
+                                            if( isset( $settings['give_tipping_amount'] ) ) {
                                                 $amount = $settings['give_tipping_amount'];
                                             }
                                             echo $this->get_amount_markup($amount); 

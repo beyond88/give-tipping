@@ -5,7 +5,7 @@
 .give-tipping-control-wrapper {
 }
 
-.up_button {
+.gt-up-button {
   margin-left: 10px;
   vertical-align: middle;
   font-weight: 600;
@@ -14,14 +14,15 @@
   color: #0042be;
   background-color: transparent;
   font-size: 20px;
+  cursor: pointer;
 }
 
-.up_button svg {
+.gt-up-button svg {
   height: 20px;
   width: 20px;
 }
 
-.remove_button {
+.gt-remove-button {
   margin-left: 10px;
   vertical-align: middle;
   font-weight: 600;
@@ -29,13 +30,24 @@
   padding: 1px 5px;
   color: #f75757;
   font-size: 20px;
+  cursor: pointer;
 }
 
-.remove_button svg {
+.gt-remove-button svg {
   height: 20px;
   width: 20px;
 }
 
 .gt-click-area-wrapper label > input {
   display: none;
+}
+
+.gt_add_field_icon,
+.gt_add_field_label{
+  color: #66bb6a;
+  font-weight: 700;
+}
+
+#gt-append_body .form-table td{
+  position: relative;
 }

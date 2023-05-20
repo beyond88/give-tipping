@@ -1,5 +1,4 @@
 <?php
-
 namespace Give_Tipping;
 
 /**
@@ -133,7 +132,7 @@ class Assets {
             wp_enqueue_style( $handle, $style['src'], $deps, $style['version'] );
         }
 
-        wp_localize_script( 'give_tipping-admin-script', 'give-tipping', [
+        wp_localize_script( 'give_tipping-admin-script', 'give_tipping', [
             'nonce' => wp_create_nonce( 'give_tipping-admin-nonce' ),
             'confirm' => __( 'Are you sure?', 'give-tipping' ),
             'error' => __( 'Something went wrong', 'give-tipping' ),

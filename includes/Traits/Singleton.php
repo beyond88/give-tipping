@@ -1,5 +1,4 @@
 <?php
-
 namespace Give_Tipping\Traits;
 
 trait Singleton {

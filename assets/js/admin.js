@@ -14,7 +14,7 @@
 			let fieldHTML = '';
             fieldHTML = `<tr valign="top" class="ui-sortable-handle">
                             <td class="middle-align">
-                                <input type="number" min="1" step="1" name="gt_settings[give_tipping_amount[]]" class="gt-meta-field gt-playfield" placeholder="10" value="">
+                                <input type="number" min="1" step="1" name="gt_settings[give_tipping_amount][]" class="gt-meta-field gt-playfield" placeholder="10" value="">
                                 <span class="gt-up-button" title="Up field">
                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
                                         <style type="text/css">.st0{fill:#9BA1B0;}</style>

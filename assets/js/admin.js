@@ -89,5 +89,12 @@
 		return el.prop("disabled", false);
 	}
 
+	//Sortable rating criteria
+	$(document).ready(function () {
+		$('.form-table #gt-append_body').sortable({
+			cursor: 'move',
+		});
+	});
+
 
 })(jQuery);

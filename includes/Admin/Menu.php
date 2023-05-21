@@ -73,7 +73,8 @@ class Menu {
      * @return void
      */
     public function enqueue_assets() {
-
+        wp_enqueue_script( 'jquery-ui-core' );
+        wp_enqueue_script( 'jquery-ui-sortable' );
     }
 
     /**

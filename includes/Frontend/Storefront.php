@@ -41,7 +41,12 @@ class Storefront {
 					$is_default = true; 
 				}
 
-				$level_text    = $amount;
+				if($tip_type == 'percentage'){
+					$level_text    = $amount.'%';
+				} else {
+					$level_text    = give_currency_filter( give_format_amount( $amount, [ 'sanitize' => false ] ), [ 'currency_code' => give_get_currency( $form_id ) ] );
+				}
+				
 				$level_classes = apply_filters( 'give_form_level_classes', 'give-tipping-list-item give-btn give-btn-level-' . $key . ' ' . ( $is_default ? 'give-default-level' : '' ), $form_id, $amount );
 
 				$formatted_amount = give_format_amount(

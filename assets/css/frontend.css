@@ -1,0 +1,23 @@
+#give-donation-tip-level-button-wrap {
+  margin: 0 0 15px;
+  padding: 0;
+  clear: both;
+  list-style: none;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+#give-donation-tip-level-button-wrap > li:last-child {
+  display: block;
+}
+
+#give-donation-tip-level-button-wrap > li {
+  list-style-type: none;
+  list-style-image: none;
+  float: left;
+  margin: 0 5px 5px 0;
+}
+
+.give-tip-amount-label {
+  margin: 15px 0;
+}

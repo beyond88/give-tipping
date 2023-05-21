@@ -31,6 +31,7 @@ class Storefront {
 			$tip_type = $settings['tipping_type'];
 			$tipping_amount = $settings['give_tipping_amount'];
 			
+			$output .= '<label class="give-label give-tip-amount-label" for="give-tip-amount">'.__('Tip amount', 'give-tipping').'</label>';
 			$output .= '<ul id="give-donation-tip-level-button-wrap" class="give-donation-levels-wrap give-list-inline">';
 
 			$is_default = false;
@@ -41,7 +42,7 @@ class Storefront {
 				}
 
 				$level_text    = $amount;
-				$level_classes = apply_filters( 'give_form_level_classes', 'give-donation-level-btn give-btn give-btn-level-' . $key . ' ' . ( $is_default ? 'give-default-level' : '' ), $form_id, $amount );
+				$level_classes = apply_filters( 'give_form_level_classes', 'give-tipping-list-item give-btn give-btn-level-' . $key . ' ' . ( $is_default ? 'give-default-level' : '' ), $form_id, $amount );
 
 				$formatted_amount = give_format_amount(
 					$amount,
@@ -59,6 +60,7 @@ class Storefront {
 						$is_default ? 1 : 0,
 						esc_html($level_text)
 					);
+					$is_default = false;
 			}
 
 			$output .= '</ul>';

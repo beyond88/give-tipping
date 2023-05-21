@@ -21,3 +21,17 @@
 .give-tip-amount-label {
   margin: 15px 0;
 }
+
+.give_tip-message-label {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.give-btn.give-tip-default-level {
+  background-color: #ff9f0d;
+  border-color: #ff9f0d;
+  color: #fff;
+  font-family: "Barlow", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+}

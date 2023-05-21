@@ -47,7 +47,7 @@ class Storefront {
 					$level_text    = give_currency_filter( give_format_amount( $amount, [ 'sanitize' => false ] ), [ 'currency_code' => give_get_currency( $form_id ) ] );
 				}
 				
-				$level_classes = apply_filters( 'give_form_level_classes', 'give-tipping-list-item give-btn give-btn-level-' . $key . ' ' . ( $is_default ? 'give-default-level' : '' ), $form_id, $amount );
+				$level_classes = apply_filters( 'give_form_level_classes', 'give-tipping-list-item give-btn give-btn-level-' . $key . ' ' . ( $is_default ? 'give-tip-default-level' : '' ), $form_id, $amount );
 
 				$formatted_amount = give_format_amount(
 					$amount,
@@ -69,6 +69,11 @@ class Storefront {
 			}
 
 			$output .= '</ul>';
+
+			$output .= '<label for="give_tip_mode_checkbox" class="give_tip-message-label" style="font-weight:normal; cursor: pointer;">
+						<input name="give_tip_mode_checkbox" type="checkbox" id="give_tip_mode_checkbox" class="give_tip_mode_checkbox" value="1">
+						<span class="give-tip-message-label-text">'.__('I\'d like to give some tips to the platform to support their cause to be a 100% free platform to help more people xxxxx relies on tips from people like you to continue operating as a completely 100% free platform for our fundraisers.', 'give-tipping').'</span>
+					</label>';
 		}
 
 		return apply_filters( 'give_recurring_admin_defined_explanation_output', $output );

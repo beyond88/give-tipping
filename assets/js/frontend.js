@@ -84,13 +84,13 @@
         gateway = form.find('input.give-gateway:radio:checked').val(),
         give_total = parseFloat(form.find('input[name="give-amount"]').val());
 
-        var tip_type = $('.give-tip-mode').val(),
-        tip_check_option = $('.give_tip_mode_checkbox').is(':checked');
-
         // This scenario is for "Edit Amount" or "Update Payment Method" stability.
         if (typeof gateway === 'undefined') {
             gateway = form.attr('data-gateway');
         }
+
+        var tip_type = $('.give-tip-mode').val(),
+        tip_check_option = $('.give_tip_mode_checkbox').is(':checked');
 
         if(tip_check_option) {
 
@@ -108,6 +108,42 @@
      * Click on amount and make changes
      * 
      ************************/
+    $(document).on('give_donation_value_updated', function (e, parent_form, amount) {
+        // If event is called when field blurred.
+        if (!parent_form) {
+            parent_form = $(this).closest('form.give-form'); // If parent form is empty, assign the current form object.
+        }
+        var gateway = parent_form.find('input.give-gateway:radio:checked').val(),
+            give_total =
+                'undefined' === typeof amount ? parent_form.find('input[name="give-amount"]').val() : amount; // Check if amount from Multi donation blur text have value.
+
+        // This scenario is for "Edit Amount" or "Update Payment Method" stability.
+        if (typeof gateway === 'undefined') {
+            gateway = form.attr('data-gateway');
+        }
+
+        let tip_amount = 0;
+        $(".give-tipping-list-item").each(function(index, item) {
+            if( $(this).hasClass('give-tip-default-level') ){
+                tip_amount = parseFloat($(this).val());
+                return tip_amount; 
+            }
+        });
+
+        var tip_type = $('.give-tip-mode').val(),
+        tip_check_option = $('.give_tip_mode_checkbox').is(':checked');
+
+        if(tip_check_option) {
+            if( tip_type === "percentage" ) {
+                tip_amount = parseFloat(percentCalculation(give_total, tip_amount));
+            }
+            var new_total_amount = give_total + tip_amount;
+
+            console.log("Six world===>", new_total_amount);
+            window.Give_Fee_Recovery.give_fee_update(parent_form, true, new_total_amount, gateway);
+        } 
+
+    });
 
     function percentCalculation(a, b){
         var c = (parseFloat(a)*parseFloat(b))/100;

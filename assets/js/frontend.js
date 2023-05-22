@@ -37,7 +37,7 @@
         let tip_amount = 0;
         $(".give-tipping-list-item").each(function(index, item) {
             if( $(this).hasClass('give-tip-default-level') ){
-                tip_amount = $(this).val();
+                tip_amount = parseFloat($(this).val());
                 return tip_amount; 
             }
         });
@@ -55,16 +55,16 @@
                 let give_total = 0;
                     give_total = parseFloat($('.give-default-level').val());
                 tip_amount = parseFloat(percentCalculation(give_total, tip_amount));
-                console.log("Give total==>", give_total);
-                console.log("Tip amount==>", tip_amount);
             }
 
             let calculated_total = parseFloat($('.give-final-total-amount').data('total'));
-            let new_total_amount = calculated_total - tip_amount;
-            if(new_total_amount < give_total ){
-                new_total_amount = give_total;
+            let subtract_tips = calculated_total - tip_amount;
+            
+            if(subtract_tips < give_total ) {
+                console.log('Substract==>',subtract_tips, 'give_total==>',give_total);
+                subtract_tips = give_total;
             }
-            window.Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
+            window.Give_Fee_Recovery.give_fee_update(form, false, subtract_tips, gateway);
         }
 
     })
@@ -72,13 +72,13 @@
 
     /************************
      * 
-     * Click on amount and make changes
+     * Click on tip amount and make changes
      * 
      ************************/
     $(".give-tipping-list-item").click(function() {
         
         // Update donation total when document is loaded.
-        let tip_amount = $(this).val();
+        let tip_amount = parseFloat($(this).val());
         var form = $(this).closest('form.give-form'),
         check_option = $('.give_fee_mode_checkbox').is(':checked'),
         gateway = form.find('input.give-gateway:radio:checked').val(),
@@ -99,23 +99,15 @@
             }
             var new_total_amount = give_total + tip_amount;
             window.Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
+        } 
 
-        } else {
-
-            let give_total = 0;
-            if( tip_type === "percentage" ) {
-                    give_total = parseFloat($('.give-default-level').val());
-                tip_amount = parseFloat(percentCalculation(give_total, tip_amount));
-            }
-
-            let calculated_total = parseFloat($('.give-final-total-amount').data('total'));
-            let new_total_amount = calculated_total - tip_amount;
-            if(new_total_amount < give_total ){
-                new_total_amount = give_total;
-            }
-            window.Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
-        }
     });
+
+    /************************
+     * 
+     * Click on amount and make changes
+     * 
+     ************************/
 
     function percentCalculation(a, b){
         var c = (parseFloat(a)*parseFloat(b))/100;

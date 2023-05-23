@@ -262,7 +262,28 @@
                     a = o(this).is(":checked"),
                     r = e.find("input.give-gateway:radio:checked").val(),
                     n = e.find('input[name="give-amount"]').val();
-                void 0 === r && (r = e.attr("data-gateway")), Give_Fee_Recovery.give_fee_update(e, a, n, r)
+                let tip_amount = 0;
+                void 0 === r && (r = e.attr("data-gateway")), 
+                o(".give-tipping-list-item").each(function(index, item) {
+                    if( o(this).hasClass('give-tip-default-level') ){
+                        tip_amount = parseFloat(o(this).val());
+                        return tip_amount; 
+                    }
+                });
+
+                var tip_type = o('.give-tip-mode').val(),
+                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+        
+                if(tip_check_option) {
+                    if( tip_type === "percentage" ) {
+                        tip_amount = parseFloat(percentCalculation(t, tip_amount));
+                    }
+                    var new_total_amount = parseFloat(parseFloat(n) + tip_amount);
+                    Give_Fee_Recovery.give_fee_update(e, a, new_total_amount, r)
+                } else {
+                    Give_Fee_Recovery.give_fee_update(e, a, n, r)
+                }
+                
             })).change(), o(document).on("give_donation_value_updated", (function(e, a, r) {
                 a || (a = o(this).closest("form.give-form"));
                 var n = a.find("input.give-gateway:radio:checked").val(),
@@ -368,7 +389,6 @@
             let subtract_tips = calculated_total - tip_amount;
             
             if(subtract_tips < give_total ) {
-                console.log('Substract==>',subtract_tips, 'give_total==>',give_total);
                 subtract_tips = give_total;
             }
             Give_Fee_Recovery.give_fee_update(form, false, subtract_tips, gateway);

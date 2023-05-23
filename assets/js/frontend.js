@@ -309,6 +309,8 @@
                     if( tip_type === "percentage" ) {
                         tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(t, tip_amount));
                     }
+
+                    o('#give-tip-amount').val(tip_amount)
                     var new_total_amount = parseFloat(t + tip_amount);
                     Give_Fee_Recovery.give_fee_update(a, !0, new_total_amount, n);
                 } else {
@@ -380,7 +382,10 @@
                 tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(give_total, tip_amount));
             }
             var new_total_amount = give_total + tip_amount;
-            window.Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
+            Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
+
+            $('#give-tip-amount').val(tip_amount);
+
         } else {
 
             if( tip_type === "percentage" ) {
@@ -430,6 +435,7 @@
             }
             var new_total_amount = give_total + tip_amount;
             Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
+            $('#give-tip-amount').val(tip_amount);
         } 
 
     });

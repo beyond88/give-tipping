@@ -255,6 +255,10 @@
                         precision: I
                     }, e)) + '"/>')
                 } else e.find('input[name="give-fee-status"]').remove(), e.prepend('<input type="hidden" name="give-fee-status" value="disabled"/>')
+            },
+            percent_calculation: function(a, b){
+                var c = (parseFloat(a)*parseFloat(b))/100;
+                return parseFloat(c);
             }
         }, o((function() {
             o("body").on("change", ".give_fee_mode_checkbox", (function() {
@@ -276,7 +280,7 @@
         
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
-                        tip_amount = parseFloat(percentCalculation(t, tip_amount));
+                        tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(n, tip_amount));
                     }
                     var new_total_amount = parseFloat(parseFloat(n) + tip_amount);
                     Give_Fee_Recovery.give_fee_update(e, a, new_total_amount, r)
@@ -303,7 +307,7 @@
         
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
-                        tip_amount = parseFloat(percentCalculation(t, tip_amount));
+                        tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(t, tip_amount));
                     }
                     var new_total_amount = parseFloat(t + tip_amount);
                     Give_Fee_Recovery.give_fee_update(a, !0, new_total_amount, n);
@@ -373,7 +377,7 @@
         if(tip_check_option) {
 
             if( tip_type === "percentage" ) {
-                tip_amount = parseFloat(percentCalculation(give_total, tip_amount));
+                tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(give_total, tip_amount));
             }
             var new_total_amount = give_total + tip_amount;
             window.Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
@@ -382,7 +386,7 @@
             if( tip_type === "percentage" ) {
                 let give_total = 0;
                     give_total = parseFloat($('.give-default-level').val());
-                tip_amount = parseFloat(percentCalculation(give_total, tip_amount));
+                tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(give_total, tip_amount));
             }
 
             let calculated_total = parseFloat($('.give-final-total-amount').data('total'));
@@ -422,17 +426,12 @@
         if(tip_check_option) {
 
             if( tip_type === "percentage" ) {
-                tip_amount = parseFloat(percentCalculation(give_total, tip_amount));
+                tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(give_total, tip_amount));
             }
             var new_total_amount = give_total + tip_amount;
             Give_Fee_Recovery.give_fee_update(form, false, new_total_amount, gateway);
         } 
 
     });
-
-    function percentCalculation(a, b){
-        var c = (parseFloat(a)*parseFloat(b))/100;
-        return parseFloat(c);
-    }
     
 })(jQuery);

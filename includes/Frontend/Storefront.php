@@ -14,12 +14,10 @@ class Storefront {
 	 * @access   public
 	 */
 	public function __construct() {
-        // add_action( 'give_pre_form_output', array( $this, 'pre_form_output' ), 0, 1 ); // Display Give Fee label.
-		// add_action( 'give_insert_payment', array( $this, 'insert_payment' ), 10, 2 ); // Add Fee on meta at the time of Donation payment.
+		add_filter( 'give_form_level_output', [ $this, 'output' ], PHP_INT_MAX, 2);
+		add_action( 'give_insert_payment', array( $this, 'insert_payment' ), 10, 2 ); // Add Fee on meta at the time of Donation payment.
 		// add_action( 'give_donation_receipt_args', array( $this, 'payment_receipt' ), 10, 3 ); // Add actual Donation total and Recovery Fee on Payment receipt.
 		// add_action( 'give_new_receipt', array( $this, 'addReceiptItems' ), 10, 2 ); // Add actual Donation total and Recovery Fee on Payment receipt.
-		add_filter( 'give_form_level_output', [ $this, 'output' ], PHP_INT_MAX, 2);
-		
     }
 
 	public function output($output, $form_id) {
@@ -75,20 +73,11 @@ class Storefront {
 						<span class="give-tip-message-label-text">'.__('I\'d like to give some tips to the platform to support their cause to be a 100% free platform to help more people xxxxx relies on tips from people like you to continue operating as a completely 100% free platform for our fundraisers.', 'give-tipping').'</span>
 					</label>';
 			$output .= '<input type="hidden" name="give-tip-mode" class="give-tip-mode" id="give-tip-mode" value="'.esc_attr($tip_type).'"/>';
+			$output .= '<input type="hidden" name="give-tip-amount" class="give-tip-amount" id="give-tip-amount" value=""/>';
 		}
 
 		return apply_filters( 'give_recurring_admin_defined_explanation_output', $output );
 	}
-
-    /**
-	 * Display tip amount
-	 *
-	 * @since    1.0.0
-	 * @access   public
-	 */
-    public function pre_form_output( $form_id ) {
-        echo "Hello World";
-    }
 
 	/**
      * Store fee amount of total donation into post meta.
@@ -101,48 +90,48 @@ class Storefront {
      */
     public function insert_payment($payment_id)
     {
-        // $fee_mode_enabled = isset($_POST['give-fee-mode-enable']) ? filter_var(
-        //     $_POST['give-fee-mode-enable'],
-        //     FILTER_VALIDATE_BOOLEAN
-        // ) : false;
-        // $give_fee_status = !empty($_POST['give-fee-status']) ? $_POST['give-fee-status'] : 'disabled';
-        // $fee_status = '';
+        $fee_mode_enabled = isset($_POST['give-fee-mode-enable']) ? filter_var(
+            $_POST['give-fee-mode-enable'],
+            FILTER_VALIDATE_BOOLEAN
+        ) : false;
+        $give_fee_status = !empty($_POST['give-fee-status']) ? $_POST['give-fee-status'] : 'disabled';
+        $fee_status = '';
 
-        // // Set Give Fee donation status based on enabled/disabled.
-        // if ('enabled' === $give_fee_status && true === $fee_mode_enabled) {
-        //     $fee_status = 'accepted';
-        // } elseif ('enabled' === $give_fee_status && false === $fee_mode_enabled) {
-        //     $fee_status = 'rejected';
-        // } elseif ('disabled' === $give_fee_status) {
-        //     $fee_status = 'disabled';
-        // }
+        // Set Give Fee donation status based on enabled/disabled.
+        if ('enabled' === $give_fee_status && true === $fee_mode_enabled) {
+            $fee_status = 'accepted';
+        } elseif ('enabled' === $give_fee_status && false === $fee_mode_enabled) {
+            $fee_status = 'rejected';
+        } elseif ('disabled' === $give_fee_status) {
+            $fee_status = 'disabled';
+        }
 
-        // // If donor did not opt-on only store the status.
-        // if (!$fee_mode_enabled) {
-        //     // Update Give Fee Status.
-        //     give_update_payment_meta($payment_id, '_give_fee_status', $fee_status);
+        // If donor did not opt-on only store the status.
+        if (!$fee_mode_enabled) {
+            // Update Give Fee Status.
+            give_update_payment_meta($payment_id, '_give_fee_status', $fee_status);
 
-        //     return;
-        // }
+            return;
+        }
 
-        // // Get payment data by payment ID.
-        // $payment_data = new Give_Payment($payment_id);
-        // $total_donation = $payment_data->total;
+        // Get payment data by payment ID.
+        $payment_data = new Give_Payment($payment_id);
+        $total_donation = $payment_data->total;
 
-        // // Get Fee amount.
-        // $fee_amount = isset($_POST['give-fee-amount']) ? give_sanitize_amount_for_db(
-        //     give_clean($_POST['give-fee-amount'])
-        // ) : 0;
+        // Get Fee amount.
+        $fee_amount = isset($_POST['give-fee-amount']) ? give_sanitize_amount_for_db(
+            give_clean($_POST['give-fee-amount'])
+        ) : 0;
 
-        // // Get actual donation amount.
-        // $donation_amount = $total_donation - $fee_amount;
-        // $donation_amount = give_sanitize_amount_for_db($donation_amount);
+        // Get actual donation amount.
+        $donation_amount = $total_donation - $fee_amount;
+        $donation_amount = give_sanitize_amount_for_db($donation_amount);
 
-        // // Store Donation amount.
-        // give_update_payment_meta($payment_id, '_give_fee_donation_amount', $donation_amount);
+        // Store Donation amount.
+        give_update_payment_meta($payment_id, '_give_fee_donation_amount', $donation_amount);
 
-        // // Store total fee amount.
-        // give_update_payment_meta($payment_id, '_give_fee_amount', $fee_amount);
+        // Store total fee amount.
+        give_update_payment_meta($payment_id, '_give_fee_amount', $fee_amount);
     }
 
 	/**

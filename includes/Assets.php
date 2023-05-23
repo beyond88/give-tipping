@@ -26,10 +26,10 @@ class Assets {
      */
     public function get_scripts() {
         return [
-            'give_tipping-script' => [
+            'give_tipping' => [
                 'src'     => GIVE_TIPPING_ASSETS . '/js/frontend.js',
                 'version' => filemtime( GIVE_TIPPING_PATH . '/assets/js/frontend.js' ),
-                'deps'    => [ 'jquery' ],
+                'deps'    => [ 'give' ],
             ],
         ];
     }
@@ -59,6 +59,8 @@ class Assets {
         $scripts = $this->get_scripts();
         $styles  = $this->get_styles();
 
+        wp_dequeue_script( 'give-fee-recovery' );
+
         foreach ( $scripts as $handle => $script ) {
             $deps = isset( $script['deps'] ) ? $script['deps'] : false;
             $type = isset( $script['type'] ) ? $script['type'] : '';
@@ -75,9 +77,10 @@ class Assets {
             wp_enqueue_style( $handle, $style['src'], $deps, $style['version'] );
         }
 
-        wp_localize_script( 'give_tipping-script', 'ajax', [
-            'ajax_url' 					=> admin_url('admin-ajax.php'),
+        wp_localize_script( 'give_tipping', 'give_tipping_recovery_object', [
+            'give_fee_zero_based_currency' => wp_json_encode(array_keys(give_fee_zero_based_currency_code())),
         ]);
+
     }
 
     /**

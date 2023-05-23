@@ -15,12 +15,18 @@ class Storefront {
 	 */
 	public function __construct() {
 		add_filter( 'give_form_level_output', [ $this, 'output' ], PHP_INT_MAX, 2);
-		add_action( 'give_insert_payment', array( $this, 'insert_payment' ), PHP_INT_MAX, 2 ); // Add Fee on meta at the time of Donation payment.
-		add_action( 'give_donation_receipt_args', array( $this, 'payment_receipt' ), PHP_INT_MAX, 3 ); // Add actual Donation total and Recovery Fee on Payment receipt.
-		// add_action( 'give_new_receipt', array( $this, 'addReceiptItems' ), 10, 2 ); // Add actual Donation total and Recovery Fee on Payment receipt.
+		add_action( 'give_insert_payment', [ $this, 'insert_payment' ], PHP_INT_MAX, 2 ); // Add Fee on meta at the time of Donation payment.
+		add_action( 'give_donation_receipt_args', [ $this, 'payment_receipt' ], PHP_INT_MAX, 3 ); // Add actual Tip Amount on Payment receipt.
+		add_action( 'give_new_receipt', [ $this, 'add_receipt_items' ], PHP_INT_MAX, 2 ); // Add actual Tip Amount on Payment receipt.
     }
 
-	public function output($output, $form_id) {
+	/**
+	 * Display tip amount on donation form
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 */
+	public function output( $output, $form_id ) {
 
 		$settings = Helpers::get_settings();
 		$tip_type = '';
@@ -88,10 +94,11 @@ class Storefront {
      *
      * @param  int  $payment_id  Newly created payment ID.
      */
-    public function insert_payment($payment_id) {
+    public function insert_payment( $payment_id ) {
 		
 		$checked = isset($_POST['give_tip_mode_checkbox']) ? 1 : 0;
 		if( isset( $checked ) ) {
+			
 			// Get Fee amount.
 			$tip_type = isset($_POST['give-tip-mode']) ? sanitize_text_field(
 				give_clean($_POST['give-tip-mode'])
@@ -126,22 +133,6 @@ class Storefront {
 		// Get the donation currency.
 		$payment_currency = give_get_payment_currency_code( $donation_id );
 
-		// Get total Donation amount.
-		$total_donation = give_fee_format_amount( give_maybe_sanitize_amount( give_get_meta( $donation_id, '_give_payment_total', true ) ),
-			array(
-				'donation_id' => $donation_id,
-				'currency'    => $payment_currency,
-			)
-		);
-
-		// Get donation amount.
-		$donation_amount = give_fee_format_amount( give_maybe_sanitize_amount( give_get_meta( $donation_id, '_give_fee_donation_amount', true ) ),
-			array(
-				'donation_id' => $donation_id,
-				'currency'    => $payment_currency,
-			)
-		);
-
 		// Get Fee amount.
 		$tip_amount = give_fee_format_amount( give_maybe_sanitize_amount( give_get_meta( $donation_id, '_give_tip_amount', true ) ),
 			array(
@@ -152,7 +143,7 @@ class Storefront {
 
 		if ( isset( $tip_amount ) && give_maybe_sanitize_amount( $tip_amount ) > 0 ) {
 			// Add new item to the donation receipt.
-			$row_2 = array(
+			$row_3 = array(
 				'name'    => __( 'Tip Amount', 'give-tipping' ),
 				'value'   => give_currency_filter( $tip_amount,
 					array(
@@ -163,27 +154,7 @@ class Storefront {
 				'display' => true,// true or false | whether you need to display the new item in donation receipt or not.
 			);
 
-			$args = give_fee_recovery_array_insert_before( 'total_donation', $args, 'donation_fee_total', $row_2 );
-		}
-
-		if ( isset( $total_donation )
-		     && isset( $donation_amount )
-		     && ( $donation_amount !== $total_donation )
-		     && give_maybe_sanitize_amount( $donation_amount ) > 0
-		) {
-			// Add new item to the donation receipt.
-			$row_1 = array(
-				'name'    => __( 'Donation Amount', 'give-tipping' ),
-				'value'   => give_currency_filter( $donation_amount,
-					array(
-						'currency_code' => $payment_currency,
-						'form_id'       => $form_id,
-					)
-				),
-				'display' => true,// true or false | whether you need to display the new item in donation receipt or not.
-			);
-
-			$args = give_fee_recovery_array_insert_before( 'donation_fee_total', $args, 'donation_total_with_fee', $row_1 );
+			$args = give_fee_recovery_array_insert_before( 'total_donation', $args, 'donation_tip_amount', $row_3 );
 		}
 
 		return $args;
@@ -196,8 +167,8 @@ class Storefront {
 	 * @param DonationReceipt $receipt
 	 * @since 1.7.9
 	 */
-	public function addReceiptItems( $receipt ){
-		// $updateDonationReceipt = new UpdateDonationReceipt( $receipt );
-		// $updateDonationReceipt->apply();
+	public function add_receipt_items( $receipt ) {
+		$updateDonationReceipt = new UpdateDonationReceipt( $receipt );
+		$updateDonationReceipt->apply();
 	}
 }

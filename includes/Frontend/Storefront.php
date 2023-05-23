@@ -88,50 +88,20 @@ class Storefront {
      *
      * @param  int  $payment_id  Newly created payment ID.
      */
-    public function insert_payment($payment_id)
-    {
-        $fee_mode_enabled = isset($_POST['give-fee-mode-enable']) ? filter_var(
-            $_POST['give-fee-mode-enable'],
-            FILTER_VALIDATE_BOOLEAN
-        ) : false;
-        $give_fee_status = !empty($_POST['give-fee-status']) ? $_POST['give-fee-status'] : 'disabled';
-        $fee_status = '';
+    public function insert_payment($payment_id) {
 
-        // Set Give Fee donation status based on enabled/disabled.
-        if ('enabled' === $give_fee_status && true === $fee_mode_enabled) {
-            $fee_status = 'accepted';
-        } elseif ('enabled' === $give_fee_status && false === $fee_mode_enabled) {
-            $fee_status = 'rejected';
-        } elseif ('disabled' === $give_fee_status) {
-            $fee_status = 'disabled';
-        }
-
-        // If donor did not opt-on only store the status.
-        if (!$fee_mode_enabled) {
-            // Update Give Fee Status.
-            give_update_payment_meta($payment_id, '_give_fee_status', $fee_status);
-
-            return;
-        }
-
-        // Get payment data by payment ID.
-        $payment_data = new Give_Payment($payment_id);
-        $total_donation = $payment_data->total;
-
+		
         // Get Fee amount.
-        $fee_amount = isset($_POST['give-fee-amount']) ? give_sanitize_amount_for_db(
-            give_clean($_POST['give-fee-amount'])
+        $tip_type = isset($_POST['give-tip-mode']) ? give_sanitize_amount_for_db(
+            give_clean($_POST['give-tip-mode'])
+        ) : 'fixed';
+		$tip_amount = isset($_POST['give-tip-amount']) ? give_sanitize_amount_for_db(
+            give_clean($_POST['give-tip-amount'])
         ) : 0;
 
-        // Get actual donation amount.
-        $donation_amount = $total_donation - $fee_amount;
-        $donation_amount = give_sanitize_amount_for_db($donation_amount);
-
-        // Store Donation amount.
-        give_update_payment_meta($payment_id, '_give_fee_donation_amount', $donation_amount);
-
         // Store total fee amount.
-        give_update_payment_meta($payment_id, '_give_fee_amount', $fee_amount);
+		give_update_payment_meta($payment_id, '_give_tip_type', $tip_type);
+        give_update_payment_meta($payment_id, '_give_tip_amount', $tip_amount);
     }
 
 	/**

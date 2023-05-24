@@ -14,7 +14,9 @@ class Frontend {
 	 * @access   public
 	 */
     public function __construct() {
+
         new Storefront();
+
     }
 
 }

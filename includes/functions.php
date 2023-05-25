@@ -15,30 +15,29 @@ function gt_payment_receipt( $args, $donation_id, $form_id ) {
 
     if ( isset( $tip_amount ) && give_maybe_sanitize_amount( $tip_amount ) > 0 ) {
         // Add new item to the donation receipt.
-        // $row_1 = array(
-        //     'name'    => __( 'Tip Amount', 'give-tipping' ),
-        //     'value'   => give_currency_filter( $tip_amount,
-        //         array(
-        //             'currency_code' => $payment_currency,
-        //             'form_id'       => $form_id,
-        //         )
-        //     ),
-        //     'display' => true,// true or false | whether you need to display the new item in donation receipt or not.
-        // );
+        $row_1 = array(
+            'name'    => __( 'Tip Amount', 'give-tipping' ),
+            'value'   => give_currency_filter( $tip_amount,
+                array(
+                    'currency_code' => $payment_currency,
+                    'form_id'       => $form_id,
+                )
+            ),
+            'display' => true,// true or false | whether you need to display the new item in donation receipt or not.
+        );
 
-        // $args = give_fee_recovery_array_insert_before( 'total_donation', $args, 'donation_tip_amount', $row_1 );
+        $args = give_fee_recovery_array_insert_before( 'total_donation', $args, 'donation_tip_amount', $row_1 );
 
-        $args['donation_tip_amount'] = [
-            'name' => __('Tip Amount', 'give-tipping'),
-            'value' => $tip_amount,
-            'display' => true
-        ];
+        // $args['donation_tip_amount'] = [
+        //     'name' => __('Tip Amount', 'give-tipping'),
+        //     'value' => $tip_amount,
+        //     'display' => true
+        // ];
     }
 
     echo "<pre>";
     print_r($args);
     echo "</pre>";
-
 
     return $args;
 

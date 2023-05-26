@@ -137,17 +137,26 @@ class TippingList extends \WP_List_Table {
     * @param string $column_name The current column name.
     */
     protected function column_default( $item, $column_name ) {
+
+        $donation_id = $item['donation_id'];
+        $form_id = give_get_meta( $donation_id, '_give_payment_form_id', true ); 
+        $name = give_get_meta( $donation_id, '_give_donor_billing_first_name', true ) .' '. give_get_meta( $donation_id, '_give_donor_billing_last_name', true );
+        $donation = give_get_meta( $donation_id, '_give_payment_total', true ) - give_get_meta( $donation_id, '_give_tip_amount', true );
+        $donation = $this->get_amount_with_currency_symbol( $form_id, $donation );
+        $tip_amount = $this->get_amount_with_currency_symbol( $form_id, give_get_meta( $donation_id, '_give_tip_amount', true ) );
+        $date = give_get_meta( $donation_id, '_give_completed_date', true );
+
         switch ( $column_name ) {
             case 'campaign':
-                    return '<strong><a href="'.esc_url($this->get_listing_url($item['donation_id'])).'">'.esc_html( give_get_meta( $item['donation_id'], '_give_payment_form_title', true ) ).'</a></strong>';
+                    return '<strong><a href="'.esc_url($this->get_listing_url($donation_id)).'">'.esc_html( give_get_meta( $donation_id, '_give_payment_form_title', true ) ).'</a></strong>';
             case 'donation':
-                return give_get_meta( $item['donation_id'], '_give_payment_total', true );
+                return $donation;
             case 'tip_amount':
-                return esc_html( give_get_meta( $item['donation_id'], '_give_tip_amount', true ) );
+                return $tip_amount;
             case 'donor':
-                return esc_html( give_get_meta( $item['donation_id'], '_give_donor_billing_first_name', true ) );
+                return esc_html( $name );
             case 'date':
-                return esc_html( give_get_meta( $item['donation_id'], '_give_completed_date', true ) );
+                return esc_html( $date );
             return 'Unknown';
         }
     }
@@ -359,6 +368,35 @@ class TippingList extends \WP_List_Table {
         }
 
         return apply_filters( 'listing_status_links', $status_links );
+    }
+
+    private function get_amount_with_currency_symbol( $form_id, $amount ) {
+
+        $give_options        = give_get_settings();
+        $currency_position   = isset( $give_options['currency_position'] ) ? $give_options['currency_position'] : 'before';
+        $symbol              = give_currency_symbol( give_get_currency( $form_id, [] ) );
+        $currency_output     = '<span class="give-currency-symbol give-currency-position-' . esc_attr($currency_position) . '">' . esc_html($symbol) . '</span>';
+
+        $default_amount      = give_format_amount(
+            $amount,
+            [
+                'sanitize' => false,
+                'currency' => give_get_currency( $form_id ),
+            ]
+        );
+
+        $output = '';
+        if ( 'before' === $currency_position ) {
+            $output .= $currency_output;
+        }
+
+        $output .= $default_amount;
+
+        if ( 'after' === $currency_position ) {
+            $output .= $currency_output;
+        }
+
+        return $output; 
     }
 
 

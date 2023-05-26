@@ -19,6 +19,8 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use Give_Tipping\ServiceProvider;
+
 /**
  * The main plugin class
  */
@@ -32,9 +34,20 @@ final class Give_Tipping {
     const version = '1.0.0';
 
     /**
+     * @since 1.9.8 add MigrationsServiceProvider
+     * @since 1.9.0
+     *
+     * @var string[]
+     */
+    public $service_providers = [
+        ServiceProvider::class
+    ];
+
+    /**
      * Class constructor
      */
     private function __construct() {
+
         //REMOVE THIS AFTER DEV
         error_reporting(E_ALL ^ E_DEPRECATED);
 
@@ -50,7 +63,6 @@ final class Give_Tipping {
         } else {
             add_action( 'admin_notices', [ $this, 'givewp_plugin_required' ] );
         }
-
     }
 
     public function givewp_plugin_required()
@@ -83,9 +95,23 @@ final class Give_Tipping {
 
         if ( ! $instance ) {
             $instance = new self();
+            $instance->setup();
         }
 
         return $instance;
+    }
+
+    /**
+     * Setup Fee Recovery.
+     *
+     * @since  1.3.0
+     * @access private
+     */
+    private function setup()
+    {
+
+        add_action('before_give_init', [$this, 'register_service_providers']);
+
     }
 
     /**
@@ -131,6 +157,18 @@ final class Give_Tipping {
     public function activate() {
         $installer = new Give_Tipping\Installer();
         $installer->run();
+    }
+
+    /**
+     * Registers the Service Providers with GiveWP core
+     *
+     * @since 1.9.0
+     */
+    public function register_service_providers()
+    {
+        foreach ($this->service_providers as $service_provider) {
+            give()->registerServiceProvider($service_provider);
+        }
     }
 }
 

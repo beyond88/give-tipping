@@ -1,6 +1,6 @@
 <?php 
 namespace Give_Tipping\Admin;
-use Give_Tipping\Helpers; 
+use Give_Tipping\Helpers;
 
 class Menu {
 
@@ -41,7 +41,7 @@ class Menu {
      */
     public function admin_menu() {
 
-        $hook = add_submenu_page(
+        add_submenu_page(
             'edit.php?post_type=give_forms',
             __( 'Tipping', 'give-tipping' ),
             __( 'Tipping', 'give-tipping' ),
@@ -49,12 +49,43 @@ class Menu {
             'give-tipping',
             [ $this, 'give_tipping_callback' ]
         );
+
+        $hook = add_submenu_page(
+            'edit.php?post_type=give_forms',
+            __( 'Tipping Settings', 'give-tipping' ),
+            __( 'Tipping Settings', 'give-tipping' ),
+            'manage_options',
+            'give-tipping-settings',
+            [ $this, 'give_tipping_settings_callback' ]
+        );
     
         add_action( 'admin_head-' . $hook, [ $this, 'enqueue_assets' ] );
 
     }
 
+    /**
+     * Tipping settings callback
+     *
+     * @return void
+     */
     public function give_tipping_callback() {
+
+        $tips = new TippingList();
+        $template = __DIR__ . '/views/listings.php';
+
+        if ( file_exists( $template ) ) {
+            require_once $template;
+        } else {
+            echo $error = __('Tipping page missing', 'give-tipping');
+        }
+    }
+
+    /**
+     * Tipping settings callback
+     *
+     * @return void
+     */
+    public function give_tipping_settings_callback() {
         
         $template = __DIR__ . '/views/settings.php';
 

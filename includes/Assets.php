@@ -13,7 +13,7 @@ class Assets {
 
         add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
 
-        if(isset($_GET['page']) && $_GET['page'] == 'give-tipping' ){
+        if(isset($_GET['page']) && ( $_GET['page'] == 'give-tipping-settings' || $_GET['page'] == 'give-tipping' ) ){
             add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_assets' ] );
         }      
         
@@ -64,7 +64,7 @@ class Assets {
         foreach ( $scripts as $handle => $script ) {
             $deps = isset( $script['deps'] ) ? $script['deps'] : false;
             $type = isset( $script['type'] ) ? $script['type'] : '';
-            if( isset( $_GET['page'] ) && $_GET['page'] == 'give-tipping' ) {
+            if( isset( $_GET['page'] ) && $_GET['page'] == 'give-tipping-settings' ) {
 
             }
             wp_enqueue_script( $handle, $script['src'], $deps, $script['version'], true );

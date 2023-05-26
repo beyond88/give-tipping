@@ -2,7 +2,7 @@
 
 <div class="wrap">
     <h1 id="give-subscription-list-h1" class="wp-heading-inline">
-        <?php echo __('Tipping','give-tipping'); ?>
+        <?php echo __('Tipping Settings','give-tipping'); ?>
     </h1>
 
     <div class="nav-tab-wrapper give-nav-tab-wrapper">

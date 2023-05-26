@@ -27,17 +27,7 @@ function gt_payment_receipt( $args, $donation_id, $form_id ) {
         );
 
         $args = give_fee_recovery_array_insert_before( 'total_donation', $args, 'donation_tip_amount', $row_1 );
-
-        // $args['donation_tip_amount'] = [
-        //     'name' => __('Tip Amount', 'give-tipping'),
-        //     'value' => $tip_amount,
-        //     'display' => true
-        // ];
     }
-
-    echo "<pre>";
-    print_r($args);
-    echo "</pre>";
 
     return $args;
 

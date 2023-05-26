@@ -70,7 +70,7 @@ class Menu {
      */
     public function give_tipping_callback() {
 
-        $tips = new TippingList();
+        $listing = new TippingList();
         $template = __DIR__ . '/views/listings.php';
 
         if ( file_exists( $template ) ) {

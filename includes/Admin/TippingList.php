@@ -29,24 +29,18 @@ class TippingList extends \WP_List_Table {
  
     }
 
-    private function table_data()
-    {      
+    /**
+     * Collect all tips
+     *
+     * @return void
+     */
+    private function query_tippings() {      
         global $wpdb;
-        // $tableName = $wpdb->prefix . 'directia';
+        $tableName = $wpdb->prefix . 'give_donationmeta';
         $data = [];
         
-        // if( isset( $_GET['s'] ) ){
-        //    $search = $_GET['s'];
-        //    $search = trim( $search );
-
-        //    $sql = $wpdb->prepare( "SELECT * FROM %s WHERE CONCAT_WS('', title,content) LIKE %1$s ORDER BY id DESC", $tableName, $search );
-        //    $listings = $wpdb->get_results( $sql, ARRAY_A );
-        // } else {
-        //     $sql = "SELECT * FROM {$tableName} ORDER BY id DESC";
-        //     $listings = $wpdb->get_results( $sql, ARRAY_A );
-        // }
-
-        // $data = $listings;
+        $sql = "SELECT * FROM {$tableName} WHERE {$tableName}.meta_key ='_give_tip_amount'";
+        $data = $wpdb->get_results( $sql, ARRAY_A );
         return $data;
     }
 
@@ -59,7 +53,8 @@ class TippingList extends \WP_List_Table {
 
         return array(
             'cb' => '<input type="checkbox" />',
-            'title' => wp_strip_all_tags( __( 'Campaign' ) ),
+            'campaign' => wp_strip_all_tags( __( 'Campaign' ) ),
+            'donation' => wp_strip_all_tags( __( 'Donation' ) ),
             'tip_amount' => wp_strip_all_tags( __( 'Tip Amount' ) ),
             'donor' => wp_strip_all_tags( __( 'Donor' ) ),
             'date' => wp_strip_all_tags( __( 'Date' ) ),
@@ -72,7 +67,7 @@ class TippingList extends \WP_List_Table {
      */
     public function column_cb($item)
     {
-        $id = $item['id'];
+        $id = $item['meta_id'];
         ?>
         <input type="checkbox" name="<?php isset($name) ? _e($name) : _e('delete_listing[]') ?>" value="<?php echo esc_attr( $id ); ?>"/>
         <?php
@@ -88,21 +83,21 @@ class TippingList extends \WP_List_Table {
         $sortable = $this->get_sortable_columns();
         $hidden = $this->get_hidden_columns();
         $this->process_bulk_action();
-        $data = $this->table_data();
+        $data = $this->query_tippings();
         
         $totalitems = count($data);
         $user = get_current_user_id();
         $screen = get_current_screen();
         $option = $screen->get_option('per_page', 'option'); 
-        $perpage = get_user_meta($user, $option, true) ? get_user_meta($user, $option, true) : 10;
-        $this->_column_headers = array($columns,$hidden,$sortable); 
+        $perpage = 20;
+        $this->_column_headers = array($columns,$hidden,$sortable);
         if ( empty ( $per_page) || $per_page < 1 ) {
         
           $per_page = $screen->get_option( 'per_page', 'default' ); 
         }
 
         usort($data, function($a, $b){
-            $orderby = ( !empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'id'; //If no sort, default to title
+            $orderby = ( !empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'meta_id'; //If no sort, default to title
             $order = ( !empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'desc'; //If no order, default to asc
             $result = strcmp( $a[$orderby], $b[$orderby] ); //Determine sort order
             return ( $order==='asc' ) ? $result : -$result; //Send final sort direction to usort
@@ -117,18 +112,17 @@ class TippingList extends \WP_List_Table {
             "per_page" => $perpage,
         ) );
             
-        $this->items =$data;
+        $this->items = $data;
 
     }
 
-    private function get_listing_url( $id ){
+    private function get_listing_url( $id ) {
         
-        if( $id ){
-            $site_url = get_admin_url() . 'admin.php';
-            $page_slug = '?page=listing-details';
+        if( $id ) {
+            $site_url = get_admin_url();
+            $page_slug = '/edit.php?post_type=give_forms&page=give-payment-history&view=view-payment-details';
             $listing_id = '&id='.$id;
             $url = $site_url.$page_slug.$listing_id;
-
             return $url; 
         }
 
@@ -144,14 +138,16 @@ class TippingList extends \WP_List_Table {
     */
     protected function column_default( $item, $column_name ) {
         switch ( $column_name ) {
-            case 'title':
-                    return '<strong><a href="'.esc_url($this->get_listing_url($item['id'])).'">'.esc_html( $item['title'] ).'</a></strong>';
-            case 'content':
-                return esc_html( wp_trim_words( $item['content'], 5) );
-            case 'author':
-                return $this->get_user_name( $item['author'] )->user_login;
+            case 'campaign':
+                    return '<strong><a href="'.esc_url($this->get_listing_url($item['donation_id'])).'">'.esc_html( give_get_meta( $item['donation_id'], '_give_payment_form_title', true ) ).'</a></strong>';
+            case 'donation':
+                return give_get_meta( $item['donation_id'], '_give_payment_total', true );
+            case 'tip_amount':
+                return esc_html( give_get_meta( $item['donation_id'], '_give_tip_amount', true ) );
+            case 'donor':
+                return esc_html( give_get_meta( $item['donation_id'], '_give_donor_billing_first_name', true ) );
             case 'date':
-                return esc_html( $item['created_at'] );
+                return esc_html( give_get_meta( $item['donation_id'], '_give_completed_date', true ) );
             return 'Unknown';
         }
     }
@@ -195,12 +191,12 @@ class TippingList extends \WP_List_Table {
 
 		if ( array( 'trash' ) === $selected_status ) {
 			$actions = array(
-				'untrash' => __( 'Restore', 'directia' ),
-				'delete'  => __( 'Delete permanently', 'directia' ),
+				'untrash' => __( 'Restore', 'give-tipping' ),
+				'delete'  => __( 'Delete permanently', 'give-tipping' ),
 			);
 		} else {
 			$actions = array(
-				'trash'           => __( 'Move to Trash', 'directia' ),
+				'trash'           => __( 'Move to Trash', 'give-tipping' ),
 			);
 		}
 
@@ -279,7 +275,8 @@ class TippingList extends \WP_List_Table {
     {
         global $wpdb;
         $table = $wpdb->prefix . 'directia';
-        $totals = (array) $wpdb->get_results("SELECT status, COUNT( * ) AS total FROM {$table} GROUP BY status", ARRAY_A );
+        // $totals = (array) $wpdb->get_results("SELECT status, COUNT( * ) AS total FROM {$table} GROUP BY status", ARRAY_A );
+        $totals = [];
 
         $listing_count = array(
             'all'             => 0,

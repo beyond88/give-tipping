@@ -406,6 +406,10 @@
     })
     .change();
 
+    window.onload = function(e){
+        $('.give_tip_mode_checkbox').click();
+    }
+
     /************************
      * 
      * Click on tip amount and make changes

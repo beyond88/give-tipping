@@ -318,14 +318,60 @@
                 }
             })), o(document).on("give_recurring_donation_amount_updated", (function(e, a, r) {
                 a || (a = o(this).closest("form.give-form"));
+                let tip_amount = 0;
                 var n = a.attr("data-gateway");
-                Give_Fee_Recovery.give_fee_update(a, !0, r, n)
+                o(".give-tipping-list-item").each(function(index, item) {
+                    if( o(this).hasClass('give-tip-default-level') ){
+                        tip_amount = parseFloat(o(this).val());
+                        return tip_amount; 
+                    }
+                });
+
+                var tip_type = o('.give-tip-mode').val(),
+                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+                
+                if(tip_check_option) {
+                    if( tip_type === "percentage" ) {
+                        tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(t, tip_amount));
+                    }
+
+                    o('#give-tip-amount').val(tip_amount)
+                    var new_total_amount = parseFloat(parseFloat(r) + tip_amount);
+                    Give_Fee_Recovery.give_fee_update(a, !0, new_total_amount, n)
+                } else {
+                    Give_Fee_Recovery.give_fee_update(a, !0, r, n)
+                }
+
             })), o(document).on("give_gateway_loaded", (function(e, a, r) {
+                let tip_amount = 0;
                 var n = o(e.currentTarget.activeElement).closest("form.give-form");
                 0 === n.length && (n = o("#" + r));
                 var t = n.find('li.give-gateway-option-selected input[name="payment-mode"]').val(),
                     i = n.find('input[name="give-amount"]').val();
-                void 0 === t && (t = n.attr("data-gateway")), Give_Fee_Recovery.give_fee_update(n, !0, i, t)
+                void 0 === t && (t = n.attr("data-gateway")), 
+                
+                o(".give-tipping-list-item").each(function(index, item) {
+                    if( o(this).hasClass('give-tip-default-level') ){
+                        tip_amount = parseFloat(o(this).val());
+                        return tip_amount; 
+                    }
+                });
+                
+                var tip_type = o('.give-tip-mode').val(),
+                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+                
+                if(tip_check_option) {
+                    if( tip_type === "percentage" ) {
+                        tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(t, tip_amount));
+                    }
+
+                    o('#give-tip-amount').val(tip_amount)
+                    var new_total_amount = parseFloat(parseFloat(i) + tip_amount);
+                    Give_Fee_Recovery.give_fee_update(n, !0, new_total_amount, t)
+                } else {
+                    Give_Fee_Recovery.give_fee_update(n, !0, i, t)
+                }
+
             })), Give_Fee_Recovery.init()
         }))
     })()

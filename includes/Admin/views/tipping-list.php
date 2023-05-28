@@ -6,10 +6,10 @@
 	<form class="" method="get">
 		<?php
 			if(! isset($listing)) { return; }
-			$listing->process_bulk_action();
+			// $listing->process_bulk_action();
 			$listing->prepare_items();
 			$listing->search_box( __('Search tips', 'give-tipping'), $listing->searchColumn );
-			$listing->views();
+			// $listing->views();
 			$listing->display();
 		?>
 	</form>

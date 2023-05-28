@@ -141,7 +141,14 @@ class TippingList extends \WP_List_Table {
         $donation_id = $item['donation_id'];
         $form_id = give_get_meta( $donation_id, '_give_payment_form_id', true ); 
         $name = give_get_meta( $donation_id, '_give_donor_billing_first_name', true ) .' '. give_get_meta( $donation_id, '_give_donor_billing_last_name', true );
-        $donation = give_get_meta( $donation_id, '_give_payment_total', true ) - give_get_meta( $donation_id, '_give_tip_amount', true );
+        $payment_total = (float) give_get_meta( $donation_id, '_give_payment_total', true );
+        $tip_total = (float) give_get_meta( $donation_id, '_give_tip_amount', true );
+        $donation = 0;
+        if( is_numeric( $payment_total ) && is_numeric( $tip_total ) ){
+            $donation = $payment_total - $tip_total;
+        }
+
+        // $donation = give_get_meta( $donation_id, '_give_payment_total', true ) - give_get_meta( $donation_id, '_give_tip_amount', true );
         $donation = $this->get_amount_with_currency_symbol( $form_id, $donation );
         $tip_amount = $this->get_amount_with_currency_symbol( $form_id, give_get_meta( $donation_id, '_give_tip_amount', true ) );
         $date = give_get_meta( $donation_id, '_give_completed_date', true );
@@ -195,22 +202,22 @@ class TippingList extends \WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_bulk_actions() {
-		$selected_status = $this->order_query_args['status'] ?? false;
+	// public function get_bulk_actions() {
+	// 	$selected_status = $this->order_query_args['status'] ?? false;
 
-		if ( array( 'trash' ) === $selected_status ) {
-			$actions = array(
-				'untrash' => __( 'Restore', 'give-tipping' ),
-				'delete'  => __( 'Delete permanently', 'give-tipping' ),
-			);
-		} else {
-			$actions = array(
-				'trash'           => __( 'Move to Trash', 'give-tipping' ),
-			);
-		}
+	// 	if ( array( 'trash' ) === $selected_status ) {
+	// 		$actions = array(
+	// 			'untrash' => __( 'Restore', 'give-tipping' ),
+	// 			'delete'  => __( 'Delete permanently', 'give-tipping' ),
+	// 		);
+	// 	} else {
+	// 		$actions = array(
+	// 			'trash'           => __( 'Move to Trash', 'give-tipping' ),
+	// 		);
+	// 	}
 
-		return $actions;
-	}
+	// 	return $actions;
+	// }
 
     /**
     * Generates custom table navigation to prevent conflicting nonces.

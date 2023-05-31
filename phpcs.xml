@@ -6,6 +6,7 @@
     <file>.</file>
 	<!-- Exclude WP Core folders and files from being checked. -->
 	<exclude-pattern>assets</exclude-pattern>
+    <exclude-pattern>vendor</exclude-pattern>
 
     <rule ref="WordPress">
         <exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine" />

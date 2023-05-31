@@ -10,10 +10,10 @@
  * Requires PHP: 7.0
  * Text Domain: give-tipping
  * Domain Path: /languages
- *
+ * @package give-tipping
  */
 
- if ( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
@@ -27,10 +27,10 @@ use Give_Tipping\ServiceProvider;
 final class Give_Tipping {
 
     /**
-     * Plugin version
-     *
-     * @var string
-     */
+    * Plugin version
+    *
+    * @var string
+    */
     const version = '1.0.0';
 
     /**

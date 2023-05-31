@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Plugin Project" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+
+	<description>Custom set of rules to check for Coding Standards in WordPress project</description>
+
+    <file>.</file>
+	<!-- Exclude WP Core folders and files from being checked. -->
+	<exclude-pattern>assets</exclude-pattern>
+
+    <rule ref="WordPress">
+        <exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine" />
+        <exclude name="Squiz.Operators.ValidLogicalOperators.NotAllowed" />
+    </rule>
+
+</ruleset>

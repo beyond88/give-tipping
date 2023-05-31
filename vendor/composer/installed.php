@@ -3,7 +3,7 @@
         'name' => 'kaderdev/give-tipping',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '5de8090b8a1bcf8ab421a545bde89b0105fb96b5',
+        'reference' => '97aeb661f29685d2e55e245222a6a376d2279a27',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -24,7 +24,7 @@
         'kaderdev/give-tipping' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '5de8090b8a1bcf8ab421a545bde89b0105fb96b5',
+            'reference' => '97aeb661f29685d2e55e245222a6a376d2279a27',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

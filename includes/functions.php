@@ -2,9 +2,11 @@
 /**
  * Donation receipt hook
  * 
- * @param array, integer, integer
+ * @param array|integer|integer
  * @return array
+ * @package give-tipping
  */
+
 add_action( 'give_donation_receipt_args', 'gt_payment_receipt', 10, 3 );
 
 /**
@@ -13,6 +15,7 @@ add_action( 'give_donation_receipt_args', 'gt_payment_receipt', 10, 3 );
  * @param array, integer, integer
  * @return array
  */
+
 function gt_payment_receipt( $args, $donation_id, $form_id ) {
 
     // Get the donation currency.

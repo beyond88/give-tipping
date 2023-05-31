@@ -12,5 +12,13 @@
     ]
   },
   "minimum-stability": "dev",
-  "require": {}
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "dev-main",
+    "squizlabs/php_codesniffer": "4.0.x-dev"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
 }

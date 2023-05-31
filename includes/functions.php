@@ -1,6 +1,18 @@
 <?php
-
+/**
+ * Donation receipt hook
+ * 
+ * @param array, integer, integer
+ * @return array
+ */
 add_action( 'give_donation_receipt_args', 'gt_payment_receipt', 10, 3 );
+
+/**
+ * Display tip amount in donation confirmation page
+ * 
+ * @param array, integer, integer
+ * @return array
+ */
 function gt_payment_receipt( $args, $donation_id, $form_id ) {
 
     // Get the donation currency.

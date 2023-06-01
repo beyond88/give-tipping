@@ -184,9 +184,12 @@ class TippingList extends \WP_List_Table {
 
         global $wpdb;
         $tableName = $wpdb->prefix . 'give_donationmeta';
-        $data = [];
-        
+        $data = [];        
         $sql = "SELECT * FROM {$tableName} WHERE {$tableName}.meta_key ='_give_tip_amount'";
+
+        if( isset( $form_id ) ) {
+            $sql = "SELECT * FROM {$tableName} WHERE {$tableName}.meta_key ='_give_current_page_id' AND {$tableName}.meta_value =".$form_id."";
+        }
         $data = $wpdb->get_results( $sql, ARRAY_A );
         return (array) $data;
 
@@ -264,6 +267,12 @@ class TippingList extends \WP_List_Table {
 
     }
 
+    /**
+    * Get listing URL
+    *
+    * @param integer
+    * @return string
+    */
     private function get_listing_url( $id ) {
         
         if( $id ) {
@@ -525,6 +534,11 @@ class TippingList extends \WP_List_Table {
         return apply_filters( 'listing_status_links', $status_links );
     }
 
+    /**
+     * Get amount with currency symbol
+     * @param integer|float
+     * @return string
+     */
     private function get_amount_with_currency_symbol( $form_id, $amount ) {
 
         $give_options        = give_get_settings();

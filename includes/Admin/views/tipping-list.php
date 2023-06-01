@@ -8,7 +8,8 @@
 			if(! isset($listing)) { return; }
 			// $listing->process_bulk_action();
 			$listing->prepare_items();
-			$listing->search_box( __('Search tips', 'give-tipping'), $listing->searchColumn );
+			// $listing->search_box( __('Search tips', 'give-tipping'), $listing->searchColumn );
+			$listing->advanced_filters();
 			// $listing->views();
 			$listing->display();
 		?>

@@ -406,6 +406,97 @@ class TippingList extends \WP_List_Table {
         return $output; 
     }
 
+    /**
+	 * Add donation search filter.
+	 *
+	 * @return void
+	 */
+	public function advanced_filters() {
+		// $start_date = isset( $_GET['start-date'] ) ? strtotime( give_clean( $_GET['start-date'] ) ) : '';
+		// $end_date   = isset( $_GET['end-date'] ) ? strtotime( give_clean( $_GET['end-date'] ) ) : '';
+		$status     = isset( $_GET['status'] ) ? give_clean( $_GET['status'] ) : '';
+		$donor      = isset( $_GET['donor'] ) ? absint( $_GET['donor'] ) : '';
+		$search     = isset( $_GET['s'] ) ? give_clean( $_GET['s'] ) : '';
+		$form_id    = ! empty( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
+		?>
+		<div id="give-tips-filters" class="give-filters">
+			<?php $this->search_box( __( 'Search', 'give' ), 'give-payments' ); ?>
+			<!-- <div id="give-payment-date-filters">
+				<div class="give-filter give-filter-half">
+					<label for="start-date"
+						   class="give-start-date-label"><?php _e( 'Start Date', 'give' ); ?></label>
+					<input type="text"
+						   id="start-date"
+						   name="start-date"
+						   class="give_datepicker"
+						   autocomplete="off"
+						   value="<?php echo $start_date ? date_i18n( give_date_format(), $start_date ) : ''; ?>"
+						   data-standard-date="<?php echo $start_date ? date( 'Y-m-d', $start_date ) : $start_date; ?>"
+						   placeholder="<?php _e( 'Start Date', 'give' ); ?>"
+					/>
+				</div>
+				<div class="give-filter give-filter-half">
+					<label for="end-date" class="give-end-date-label"><?php _e( 'End Date', 'give' ); ?></label>
+					<input type="text"
+						   id="end-date"
+						   name="end-date"
+						   class="give_datepicker"
+						   autocomplete="off"
+						   value="<?php echo $end_date ? date_i18n( give_date_format(), $end_date ) : ''; ?>"
+						   data-standard-date="<?php echo $end_date ? date( 'Y-m-d', $end_date ) : $end_date; ?>"
+						   placeholder="<?php _e( 'End Date', 'give' ); ?>"
+					/>
+				</div>
+			</div> -->
+			<div id="give-tips-form-filter" class="give-filter">
+				<label for="give-tips-forms-filter"
+					   class="give-tips-forms-filter-label"><?php _e( 'Form', 'give' ); ?></label>
+				<?php
+				// Filter Donations by Donation Forms.
+				echo Give()->html->forms_dropdown(
+					[
+						'name'     => 'form_id',
+						'id'       => 'give-tips-forms-filter',
+						'class'    => 'give-tips-forms-filter',
+						'selected' => $form_id, // Make sure to have $form_id set to 0, if there is no selection.
+						'chosen'   => true,
+						'number'   => 30,
+					]
+				);
+				?>
+			</div>
+
+			<?php
+			/**
+			 * Action to add hidden fields and HTML in Payment search.
+			 *
+			 * @since 1.8.18
+			 */
+			do_action( 'give_payment_table_advanced_filters' );
+
+			if ( ! empty( $status ) ) {
+				echo sprintf( '<input type="hidden" name="status" value="%s"/>', esc_attr( $status ) );
+			}
+
+			if ( ! empty( $donor ) ) {
+				echo sprintf( '<input type="hidden" name="donor" value="%s"/>', absint( $donor ) );
+			}
+			?>
+
+			<div class="give-filter">
+				<?php submit_button( __( 'Apply', 'give' ), 'secondary', '', false ); ?>
+				<?php
+				// Clear active filters button.
+				if ( ! empty( $start_date ) || ! empty( $end_date ) || ! empty( $donor ) || ! empty( $search ) || ! empty( $status ) || ! empty( $form_id ) ) :
+					?>
+					<a href="<?php echo admin_url( 'edit.php?post_type=give_forms&page=give-payment-history' ); ?>"
+					   class="button give-clear-filters-button"><?php _e( 'Clear Filters', 'give' ); ?></a>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<?php
+	}
 
 }
 endif;

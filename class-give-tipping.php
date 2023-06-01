@@ -18,8 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
-require(dirname(__FILE__) . '/wp-load.php');
-
 use Give_Tipping\ServiceProvider;
 
 /**

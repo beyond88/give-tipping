@@ -263,7 +263,8 @@
             display_percentage_amount: function(target_total_amount){
                 o(".give-tipping-list-item").each(function(index, item) {
                     let current_value = parseFloat(o(this).val());
-                    o(this).text(`${o(this).data('currency')}${Math.ceil(Give_Fee_Recovery.percent_calculation(target_total_amount, current_value))}`);
+                    let formatted_amount_label = Give_Fee_Recovery.percent_calculation(target_total_amount, current_value);
+                    o(this).text(`${o(this).data('currency')}${Math.ceil(formatted_amount_label)}`);
                 });
             }
         }, o((function() {

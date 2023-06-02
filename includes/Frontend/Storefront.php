@@ -30,10 +30,6 @@ class Storefront {
 		$prices = apply_filters( 'give_form_variable_prices', give_get_variable_prices( $form_id ), $form_id );
 		$default_price = Helpers::get_default_price( $form_id );
 
-		// echo "<pre>";
-		// print_r($prices);
-		// echo "</pre>";
-
 		$settings = Helpers::get_settings();
 		$tip_type = '';
 		$tipping_amount = '';
@@ -107,8 +103,8 @@ class Storefront {
      */
     public function insert_payment( $payment_id ) {
 		
-		$checked = isset($_POST['give_tip_mode_checkbox']) ? 1 : 0;
-		if( isset( $checked ) ) {
+		$checked = $_POST['give_tip_mode_checkbox'];
+		if( isset( $checked ) && $checked == 1 ) {
 			
 			// Get Fee amount.
 			$tip_type = isset($_POST['give-tip-mode']) ? sanitize_text_field(

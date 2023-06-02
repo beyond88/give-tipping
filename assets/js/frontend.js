@@ -445,6 +445,7 @@
 
             $('.give-tipping-list-item').removeAttr('disabled');
             $('#give-donation-tip-level-button-wrap').css({"opacity":"1"});
+            $(this).val(1)
 
         } else {
 
@@ -464,6 +465,8 @@
 
             $('.give-tipping-list-item').attr('disabled', 'disabled');
             $('#give-donation-tip-level-button-wrap').css({"opacity":"0.5"});
+            $(this).val(0)
+
         }
 
     })

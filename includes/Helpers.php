@@ -38,4 +38,40 @@ class Helpers {
         return wp_parse_args( get_option(self::$_optionName), self::$_defaultOptions );
     }
 
+    /**
+	 * Get default price of form variable prices
+	 * 
+	 * @since  1.0.0
+	 * @param  integer
+     * @return integer
+	 */
+    public static function get_default_price( $form_id ) {
+
+        $defualt_price = 0;
+        $prices = apply_filters( 'give_form_variable_prices', give_get_variable_prices( $form_id ), $form_id );
+
+        if( ! empty( $prices ) ) {
+            foreach ( $prices as $price ) {
+                if( array_key_exists( '_give_default', $price ) ){
+                    $defualt_price = $price['_give_amount']; 
+                }
+            }
+        }
+
+        return $defualt_price; 
+    }
+
+    /**
+	 * Get default price of form variable prices
+	 * 
+	 * @since  1.0.0
+	 * @param  integer
+     * @return integer
+	 */
+    public static function convert_percentage_into_amount( $total, $percentage ) {
+        if( is_numeric( $total ) && is_numeric( $percentage )) {
+            return ceil( ( $total * $percentage ) / 100 );
+        }
+    }
+
 }

@@ -27,6 +27,13 @@ class Storefront {
 	 */
 	public function output( $output, $form_id ) {
 
+		$prices = apply_filters( 'give_form_variable_prices', give_get_variable_prices( $form_id ), $form_id );
+		$default_price = Helpers::get_default_price( $form_id );
+
+		// echo "<pre>";
+		// print_r($prices);
+		// echo "</pre>";
+
 		$settings = Helpers::get_settings();
 		$tip_type = '';
 		$tipping_amount = '';
@@ -40,14 +47,18 @@ class Storefront {
 			$is_default = false;
 
 			foreach ( $tipping_amount as $key => $amount ) {
-				if($key == 1) {
+				if( $key == 1 ) {
 					$is_default = true; 
 				}
 
-				if($tip_type == 'percentage'){
-					$level_text    = $amount.'%';
+				if( $tip_type == 'percentage' ) {
+					// $level_text	= $amount.'%';
+
+					$level_text = Helpers::convert_percentage_into_amount($default_price, $amount);
+					// $amount = $level_text;
+					$level_text = give_currency_filter( give_format_amount( $level_text, [ 'sanitize' => false ] ), [ 'currency_code' => give_get_currency( $form_id ) ] );
 				} else {
-					$level_text    = give_currency_filter( give_format_amount( $amount, [ 'sanitize' => false ] ), [ 'currency_code' => give_get_currency( $form_id ) ] );
+					$level_text = give_currency_filter( give_format_amount( $amount, [ 'sanitize' => false ] ), [ 'currency_code' => give_get_currency( $form_id ) ] );
 				}
 				
 				$level_classes = apply_filters( 'give_form_level_classes', 'give-tipping-list-item give-btn give-btn-level-' . $key . ' ' . ( $is_default ? 'give-tip-default-level' : '' ), $form_id, $amount );
@@ -61,12 +72,13 @@ class Storefront {
 				);
 
 				$output .= sprintf(
-						'<li><button type="button" data-price-id="%1$s" class="%2$s" value="%3$s" data-default="%4$s">%5$s</button></li>',
+						'<li><button type="button" data-price-id="%1$s" class="%2$s" value="%3$s" data-default="%4$s" data-currency="%6$s">%5$s</button></li>',
 						esc_attr($key),
 						esc_attr($level_classes),
 						esc_attr($formatted_amount),
 						$is_default ? 1 : 0,
-						esc_html($level_text)
+						esc_html($level_text),
+						give_currency_symbol(give_get_currency( $form_id ))
 					);
 					$is_default = false;
 			}

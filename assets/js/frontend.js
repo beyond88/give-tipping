@@ -259,6 +259,12 @@
             percent_calculation: function(a, b){
                 var c = (parseFloat(a)*parseFloat(b))/100;
                 return parseFloat(c);
+            },
+            display_percentage_amount: function(target_total_amount){
+                o(".give-tipping-list-item").each(function(index, item) {
+                    let current_value = parseFloat(o(this).val());
+                    o(this).text(`${o(this).data('currency')}${Math.ceil(Give_Fee_Recovery.percent_calculation(target_total_amount, current_value))}`);
+                });
             }
         }, o((function() {
             o("body").on("change", ".give_fee_mode_checkbox", (function() {
@@ -308,6 +314,10 @@
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
                         tip_amount = parseFloat(Give_Fee_Recovery.percent_calculation(t, tip_amount));
+
+                        //console.log("total, tip", t, tip_amount);
+                        Give_Fee_Recovery.display_percentage_amount(t);
+                        
                     }
 
                     o('#give-tip-amount').val(tip_amount)

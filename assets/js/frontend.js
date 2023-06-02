@@ -432,6 +432,9 @@
 
             $('#give-tip-amount').val(tip_amount);
 
+            $('.give-tipping-list-item').removeAttr('disabled');
+            $('#give-donation-tip-level-button-wrap').css({"opacity":"1"});
+
         } else {
 
             if( tip_type === "percentage" ) {
@@ -447,6 +450,9 @@
                 subtract_tips = give_total;
             }
             Give_Fee_Recovery.give_fee_update(form, false, subtract_tips, gateway);
+
+            $('.give-tipping-list-item').attr('disabled', 'disabled');
+            $('#give-donation-tip-level-button-wrap').css({"opacity":"0.5"});
         }
 
     })

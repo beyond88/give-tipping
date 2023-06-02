@@ -35,3 +35,9 @@
     "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
 }
+
+.give-btn:disabled:hover {
+  color: #000;
+  background-color: #f7f8f9;
+  border-color: #f7f8f9;
+}

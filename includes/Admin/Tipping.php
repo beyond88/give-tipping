@@ -15,7 +15,7 @@ class Tipping {
 		add_action( 'give_view_donation_details_totals_after', [ $this, 'show_fee_order_detail' ], 10, 1 );
 
         // Override Give Email tags.
-		add_action( 'give_add_email_tags', array( $this, 'email_tags' ), 999999 );
+		add_action( 'give_add_email_tags', array( $this, 'email_tags' ), 99999999 );
 
         // Modify amount tag for Preview when Give core >= 2.0 .
 		add_filter( 'give_email_tag_amount', array( $this, 'preview_amount_tag' ), PHP_INT_MAX, 2 );
@@ -340,115 +340,164 @@ class Tipping {
 			)
 		);
 
-		$donation_amount =
-			give_currency_filter(
-				give_fee_format_amount(
-					$donation_amount,
+		if ( ! empty( $fee_amount ) && ! empty( $tip_amount ) ) {
+
+			$donation_amount = ($donation_amount - $tip_amount); 
+
+			$donation_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$donation_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format fees amount.
+			$fee_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$fee_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format fees amount.
+			$tip_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$tip_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+				
+			$final_donation_amount = sprintf(
+				__( '%1$s (%2$s donation + %3$s for tips + %4$s for fees)', 'give-tipping' ),
+				$final_donation_amount,
+				$donation_amount,
+				$tip_amount,
+				$fee_amount
+			);
+
+		} else if( ! empty( $fee_amount ) && empty( $tip_amount ) ) {
+
+			$donation_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$donation_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format fees amount.
+			$fee_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$fee_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format tips amount.
+			$tip_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$tip_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Update final donation amount with fees breakdown.
+			$final_donation_amount = sprintf(
+				__( '%1$s (%2$s donation + %3$s for fees)', 'give-fee-recovery' ),
+				$final_donation_amount,
+				$donation_amount,
+				$fee_amount
+			);
+
+		} else if( empty( $fee_amount ) && ! empty( $tip_amount ) ) {
+
+			$donation_amount = ($donation_total - $tip_amount);
+
+			$donation_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$donation_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format tips amount.
+			$tip_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$tip_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Update final donation amount with fees breakdown.
+			$final_donation_amount = sprintf(
+				__( '%1$s (%2$s donation + %3$s for tips)', 'give-fee-recovery' ),
+				$final_donation_amount,
+				$donation_amount,
+				$tip_amount
+			);
+
+		} else {
+			// Default Donation Amount Output.
+			$final_donation_amount = give_currency_filter(
+				give_fee_format_amount( $donation_total,
 					array(
 						'donation_id' => $donation_id,
 						'currency'    => $currency_code,
 					)
-				), array(
+				),
+				array(
 					'currency_code' => $currency_code,
 				)
-		);
-
-		// Check if tip amount is not empty.
-		if ( ! empty( $tip_amount ) ) {
-
-            $donation_amount = ((float)$donation_total - (float)$tip_amount);
-
-            $donation_amount =
-                give_currency_filter(
-                    give_fee_format_amount(
-                        $donation_amount,
-                        array(
-                            'donation_id' => $donation_id,
-                            'currency'    => $currency_code,
-                        )
-                    ), array(
-                    'currency_code' => $currency_code,
-                )
-            );
-
-            // Format tip amount.
-            $tip_amount =
-                give_currency_filter(
-                    give_fee_format_amount(
-                        $tip_amount,
-                        array(
-                            'donation_id' => $donation_id,
-                            'currency'    => $currency_code,
-                        )
-                    ), array(
-                    'currency_code' => $currency_code,
-                )
-            );
-
-			// Check if fees amount is not empty.
-			if ( ! empty( $fee_amount ) ) {
-				// Format fees amount.
-				$fee_amount =
-					give_currency_filter(
-						give_fee_format_amount(
-							$fee_amount,
-							array(
-								'donation_id' => $donation_id,
-								'currency'    => $currency_code,
-							)
-						), array(
-						'currency_code' => $currency_code,
-					)
-				);
-
-				// Update final donation amount with fees breakdown.
-				$final_donation_amount = sprintf(
-					__( '%1$s (%2$s donation + %3$s for tips + %4$s for fees)', 'give-tipping' ),
-					$final_donation_amount,
-					$donation_amount,
-					$tip_amount,
-					$fee_amount
-				);
-
-			} else {
-
-				// Update final donation amount with fees breakdown.
-				$final_donation_amount = sprintf(
-					__( '%1$s (%2$s donation + %3$s for tips)', 'give-tipping' ),
-					$final_donation_amount,
-					$donation_amount,
-					$tip_amount
-				);
-			}
-
-		} else {
-
-			// Check if fees amount is not empty.
-			if ( ! empty( $fee_amount ) ) {
-				// Format fees amount.
-				$fee_amount =
-					give_currency_filter(
-						give_fee_format_amount(
-							$fee_amount,
-							array(
-								'donation_id' => $donation_id,
-								'currency'    => $currency_code,
-							)
-						), array(
-						'currency_code' => $currency_code,
-					)
-				);
-
-				// Update final donation amount with fees breakdown.
-				$final_donation_amount = sprintf(
-					__( '%1$s (%2$s donation + %3$s for fees)', 'give-tipping' ),
-					$final_donation_amount,
-					$donation_amount,
-					$fee_amount
-				);
-
-			}
+			);
 		}
+
 		// Output final donation amount information with fees breakdown, if fees added.
 		return $final_donation_amount;
 	}

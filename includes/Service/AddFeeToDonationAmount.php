@@ -17,16 +17,19 @@ class AddFeeToDonationAmount {
 	 */
 	public function __invoke( $donationAmount ) {
 		
+		$tipEnable = absint( $_POST['give_tip_enable_checkbox'] );
+		
+		if( $tipEnable == 0 ){
+			return $donationAmount;
+		}
+
 		$formId = isset( $_POST['give-form-id'] ) ?
 			absint( $_POST['give-form-id'] ) :
 			absint( $_POST['give_form_id'] );
-		
 		$giveAmount = isset( $_POST['give-amount'] ) ? absint( $_POST['give-amount'] ) : absint( $_POST['give_amount'] );
 
-		$allowTip = isset( $_POST['give_tip_mode_checkbox'] ) ? 1 : 0;
-		$tipFee = 0;
 
-		$tipMode = isset( $_POST['give-tip-mode'] ) ?
+		$tipType = isset( $_POST['give-tip-mode'] ) ?
 			give_clean( $_POST['give-tip-mode'] ) : '';
 
 		$tipAmount = isset( $_POST['give-tip-amount'] ) ?
@@ -36,11 +39,7 @@ class AddFeeToDonationAmount {
 			$donationAmount = $giveAmount;
 		}
 
-		if ( $allowTip != 1 ) {
-			return $donationAmount;
-		}
-
-		if( $tipMode == 'percentage' ) {
+		if( $tipType == 'percentage' ) {
 			$tipAmount = $this->calculateTipAmount( $donationAmount, $tipAmount );
 		}
 

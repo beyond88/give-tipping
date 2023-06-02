@@ -283,7 +283,7 @@
                 });
 
                 var tip_type = o('.give-tip-mode').val(),
-                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+                tip_check_option = o('.give_tip_enable_checkbox').is(':checked');
         
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
@@ -310,7 +310,7 @@
                 });
         
                 var tip_type = o('.give-tip-mode').val(),
-                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+                tip_check_option = o('.give_tip_enable_checkbox').is(':checked');
         
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
@@ -339,7 +339,7 @@
                 });
 
                 var tip_type = o('.give-tip-mode').val(),
-                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+                tip_check_option = o('.give_tip_enable_checkbox').is(':checked');
                 
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
@@ -369,7 +369,7 @@
                 });
                 
                 var tip_type = o('.give-tip-mode').val(),
-                tip_check_option = o('.give_tip_mode_checkbox').is(':checked');
+                tip_check_option = o('.give_tip_enable_checkbox').is(':checked');
                 
                 if(tip_check_option) {
                     if( tip_type === "percentage" ) {
@@ -410,7 +410,7 @@
      * 
      ************************/
     $body
-    .on('change', '.give_tip_mode_checkbox', function () {
+    .on('change', '.give_tip_enable_checkbox', function () {
         // Update donation total when document is loaded.
         var form = $(this).closest('form.give-form'),
             check_option = $('.give_fee_mode_checkbox').is(':checked'),
@@ -445,6 +445,7 @@
 
             $('.give-tipping-list-item').removeAttr('disabled');
             $('#give-donation-tip-level-button-wrap').css({"opacity":"1"});
+            $(this).val(1)
 
         } else {
 
@@ -464,13 +465,15 @@
 
             $('.give-tipping-list-item').attr('disabled', 'disabled');
             $('#give-donation-tip-level-button-wrap').css({"opacity":"0.5"});
+            $(this).val(0)
+
         }
 
     })
     .change();
 
     window.onload = function(e){
-        $('.give_tip_mode_checkbox').click();
+        $('.give_tip_enable_checkbox').click();
     }
 
     /************************
@@ -493,7 +496,7 @@
         }
 
         var tip_type = $('.give-tip-mode').val(),
-        tip_check_option = $('.give_tip_mode_checkbox').is(':checked');
+        tip_check_option = $('.give_tip_enable_checkbox').is(':checked');
 
         if(tip_check_option) {
 

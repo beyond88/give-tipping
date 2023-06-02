@@ -30,10 +30,6 @@ class Storefront {
 		$prices = apply_filters( 'give_form_variable_prices', give_get_variable_prices( $form_id ), $form_id );
 		$default_price = Helpers::get_default_price( $form_id );
 
-		// echo "<pre>";
-		// print_r($prices);
-		// echo "</pre>";
-
 		$settings = Helpers::get_settings();
 		$tip_type = '';
 		$tipping_amount = '';
@@ -85,8 +81,8 @@ class Storefront {
 
 			$output .= '</ul>';
 
-			$output .= '<label for="give_tip_mode_checkbox" class="give_tip-message-label" style="font-weight:normal; cursor: pointer;">
-						<input name="give_tip_mode_checkbox" type="checkbox" id="give_tip_mode_checkbox" class="give_tip_mode_checkbox" value="1">
+			$output .= '<label for="give_tip_enable_checkbox" class="give_tip-message-label" style="font-weight:normal; cursor: pointer;">
+						<input name="give_tip_enable_checkbox" type="checkbox" id="give_tip_enable_checkbox" class="give_tip_enable_checkbox" value="1">
 						<span class="give-tip-message-label-text">'.__('I\'d like to give some tips to the platform to support their cause to be a 100% free platform to help more people xxxxx relies on tips from people like you to continue operating as a completely 100% free platform for our fundraisers.', 'give-tipping').'</span>
 					</label>';
 			$output .= '<input type="hidden" name="give-tip-mode" class="give-tip-mode" id="give-tip-mode" value="'.esc_attr($tip_type).'"/>';
@@ -107,8 +103,8 @@ class Storefront {
      */
     public function insert_payment( $payment_id ) {
 		
-		$checked = isset($_POST['give_tip_mode_checkbox']) ? 1 : 0;
-		if( isset( $checked ) ) {
+		$checked = $_POST['give_tip_enable_checkbox'];
+		if( isset( $checked ) && $checked == 1 ) {
 			
 			// Get Fee amount.
 			$tip_type = isset($_POST['give-tip-mode']) ? sanitize_text_field(

@@ -14,6 +14,12 @@ class Tipping {
         // Hook update donation payment.
 		add_action( 'give_view_donation_details_totals_after', [ $this, 'show_fee_order_detail' ], 10, 1 );
 
+        // Override Give Email tags.
+		add_action( 'give_add_email_tags', array( $this, 'email_tags' ), 99999999 );
+
+        // Modify amount tag for Preview when Give core >= 2.0 .
+		add_filter( 'give_email_tag_amount', array( $this, 'preview_amount_tag' ), PHP_INT_MAX, 2 );
+
     }
 
     /**
@@ -26,12 +32,23 @@ class Tipping {
     public function remove_similar_messsage() {
         ?>
         <style>
-            #give-donation-overview .inside .column-container div:nth-child(3) p:nth-child(4){
+            /* #give-donation-overview .inside .column-container div:nth-child(3) p:nth-child(4){
                 display: none; 
-            }
+            } */
         </style>
         <?php
     }
+
+	/**
+	 * Checks if the Recurring Addon is active or not.
+	 *
+	 * @since 1.7
+	 *
+	 * @return boolean
+	 */
+	public function is_recurring_active() {
+		return defined( 'GIVE_RECURRING_VERSION' );
+	}
     
     /**
      * Display donation details with tips
@@ -57,6 +74,7 @@ class Tipping {
 				'currency'    => $payment_currency,
 			)
 		);
+		
 		// Get donation amount.
 		$donation_amount = give_fee_format_amount(
 			give_maybe_sanitize_amount(
@@ -72,11 +90,15 @@ class Tipping {
 			)
 		);
 
+		if( $donation_amount == 0 ) {
+			$donation_amount = $total_donation;
+		}
+
 		$subscription_id = give_get_meta( $payment_id, 'subscription_id', true );
 
 		if ( ! empty( $subscription_id ) && $this->is_recurring_active() ) {
 
-			$subscription      = new Give_Subscription( $subscription_id );
+			$subscription      = new \Give_Subscription( $subscription_id );
 			$parent_payment_id = $subscription->get_original_payment_id();
 			$donation_amount = give_fee_format_amount(
                 give_maybe_sanitize_amount(give_get_meta($payment_id, '_give_fee_donation_amount', true),
@@ -136,7 +158,7 @@ class Tipping {
         $donation_amount = $donation_amount - $tip_amount; 
 
         // Display Donation amount if total donation and donation amount not same.
-        if (isset($total_donation, $donation_amount) && $donation_amount !== $total_donation && $donation_amount > 0) {
+        if ( isset($donation_amount) || isset($tip_amount) ) {
             ?>
             <p>
                 <strong><?php
@@ -175,7 +197,7 @@ class Tipping {
                 // Display Donation fee if set.
                 if (isset($give_fee_amount) && give_maybe_sanitize_amount($give_fee_amount) > 0) {
                     echo ' ' . sprintf(
-                            __('+ %s for fees', 'give-fee-recovery'),
+                            __('+ %s for fees', 'give-tipping'),
                             esc_html(
                                 give_currency_filter(
                                     give_fee_format_amount(
@@ -241,6 +263,280 @@ class Tipping {
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Override Give Email tags
+	 *
+	 * @since  1.1.0
+	 * @access public
+	 */
+	public function email_tags() {
+
+		// Remove amount email tag.
+		give_remove_email_tag( 'amount' );
+
+		// Add amount email tag with custom function.
+		give_add_email_tag(
+			'amount', __( 'The total donation amount with currency sign.', 'give-tipping' ), array(
+				$this,
+				'give_fee_email_tag_amount',
+			)
+		);
+	}
+
+	/**
+	 * Add Custom call back function for {amount} tag.
+	 *
+	 * @since  1.1.0
+	 *
+	 * @param int|array $tag_args give payment id.
+	 *
+	 * @return string
+	 */
+	function give_fee_email_tag_amount( $tag_args ) {
+
+		// Backward compatibility.
+		$payment_id = $tag_args;
+		if ( isset( $tag_args ) && is_array( $tag_args ) ) {
+			$payment_id = $tag_args['payment_id'];
+		}
+
+		// Get Fee Recovery amount string.
+		$give_amount = $this->fee_amount_string( $payment_id );
+
+		return html_entity_decode( $give_amount, ENT_COMPAT, 'UTF-8' );
+
+	}
+
+    /**
+	 * Get Fee Recovery amount string.
+	 *
+     * @param int $donation_id Donation ID.
+     *
+	 * @since 1.3.7
+	 *
+	 * @return string
+	 */
+	function fee_amount_string( $donation_id ) {
+
+		// Define required variables.
+		$currency_code   = give_get_payment_currency_code( $donation_id );
+		$donation_total  = give_donation_amount( $donation_id );
+		$fee_amount      = give_get_meta( $donation_id, '_give_fee_amount', true );
+		$donation_amount = give_get_meta( $donation_id, '_give_fee_donation_amount', true );
+        $tip_amount      = give_get_meta( $donation_id, '_give_tip_amount', true );
+
+		// Default Donation Amount Output.
+		$final_donation_amount = give_currency_filter(
+			give_fee_format_amount( $donation_total,
+				array(
+					'donation_id' => $donation_id,
+					'currency'    => $currency_code,
+				)
+			),
+			array(
+				'currency_code' => $currency_code,
+			)
+		);
+
+		if ( ! empty( $fee_amount ) && ! empty( $tip_amount ) ) {
+
+			$donation_amount = ($donation_amount - $tip_amount); 
+
+			$donation_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$donation_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format fees amount.
+			$fee_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$fee_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format fees amount.
+			$tip_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$tip_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+				
+			$final_donation_amount = sprintf(
+				__( '%1$s (%2$s donation + %3$s for tips + %4$s for fees)', 'give-tipping' ),
+				$final_donation_amount,
+				$donation_amount,
+				$tip_amount,
+				$fee_amount
+			);
+
+		} else if( ! empty( $fee_amount ) && empty( $tip_amount ) ) {
+
+			$donation_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$donation_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format fees amount.
+			$fee_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$fee_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format tips amount.
+			$tip_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$tip_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Update final donation amount with fees breakdown.
+			$final_donation_amount = sprintf(
+				__( '%1$s (%2$s donation + %3$s for fees)', 'give-fee-recovery' ),
+				$final_donation_amount,
+				$donation_amount,
+				$fee_amount
+			);
+
+		} else if( empty( $fee_amount ) && ! empty( $tip_amount ) ) {
+
+			$donation_amount = ($donation_total - $tip_amount);
+
+			$donation_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$donation_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Format tips amount.
+			$tip_amount =
+				give_currency_filter(
+					give_fee_format_amount(
+						$tip_amount,
+						array(
+							'donation_id' => $donation_id,
+							'currency'    => $currency_code,
+						)
+					), array(
+						'currency_code' => $currency_code,
+					)
+				);
+
+			// Update final donation amount with fees breakdown.
+			$final_donation_amount = sprintf(
+				__( '%1$s (%2$s donation + %3$s for tips)', 'give-fee-recovery' ),
+				$final_donation_amount,
+				$donation_amount,
+				$tip_amount
+			);
+
+		} else {
+			// Default Donation Amount Output.
+			$final_donation_amount = give_currency_filter(
+				give_fee_format_amount( $donation_total,
+					array(
+						'donation_id' => $donation_id,
+						'currency'    => $currency_code,
+					)
+				),
+				array(
+					'currency_code' => $currency_code,
+				)
+			);
+		}
+
+		// Output final donation amount information with fees breakdown, if fees added.
+		return $final_donation_amount;
+	}
+
+	/**
+	 * Modify {amount} tag for the Preview Purpose in Give 2.0
+	 *
+	 * @since  1.1.0
+	 * @update 1.3.7
+	 *
+	 * @access public
+	 *
+	 * @param string $amount
+	 * @param array  $tag_args
+	 *
+	 * @return string
+	 */
+	public function preview_amount_tag( $amount, $tag_args ) {
+
+		if ( isset( $tag_args['payment_id'] ) && ! empty( $tag_args['payment_id'] ) ) {
+			$payment_id = $tag_args['payment_id'];
+
+			$give_amount = $this->fee_amount_string( $payment_id );
+
+			$amount = html_entity_decode( $give_amount, ENT_COMPAT, 'UTF-8' );
+		}
+
+		/**
+		 * Filter the {amount} email template tag output.
+		 *
+		 * @since 1.3.6
+		 *
+		 * @param string $amount
+		 * @param array  $tag_args
+		 */
+		$amount = apply_filters( 'give_fee_recovery_email_tag_amount', $amount, $tag_args );
+
+		return $amount;
+
 	}
 
 }

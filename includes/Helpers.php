@@ -74,4 +74,28 @@ class Helpers {
         }
     }
 
+    /**
+	 * Get default price of form variable prices
+	 * 
+	 * @since  1.0.0
+	 * @param  none
+     * @return array
+	 */
+    public static function get_tipping_list() {
+
+        $form_id    = ! empty( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : null;
+
+        global $wpdb;
+        $tableName = $wpdb->prefix . 'give_donationmeta';
+        $data = [];        
+        $sql = "SELECT * FROM {$tableName} WHERE {$tableName}.meta_key ='_give_tip_amount'";
+
+        if( isset( $form_id ) ) {
+            $sql = "SELECT * FROM {$tableName} WHERE {$tableName}.meta_key ='_give_current_page_id' AND {$tableName}.meta_value =".$form_id."";
+        }
+        $data = $wpdb->get_results( $sql, ARRAY_A );
+        return (array) $data;
+
+    }
+
 }

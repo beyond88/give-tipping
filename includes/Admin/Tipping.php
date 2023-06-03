@@ -160,7 +160,7 @@ class Tipping {
         // Display Donation amount if total donation and donation amount not same.
         if ( isset($donation_amount) || isset($tip_amount) ) {
             ?>
-            <p>
+            <p style="display:block;">
                 <strong><?php
                     esc_html_e('Donation Amount:', 'give-fee-recovery'); ?></strong><br>
                 <?php
@@ -192,6 +192,14 @@ class Tipping {
                                 )
                             )
                         );
+
+					echo "
+						<style>
+							#give-donation-overview .inside .column-container div:nth-child(3) p:nth-child(4){
+								display: none; 
+							}
+						</style>
+					";
                 }
 
                 // Display Donation fee if set.
@@ -213,6 +221,14 @@ class Tipping {
                                 )
                             )
                         );
+
+						echo "
+							<style>
+								#give-donation-overview .inside .column-container div:nth-child(3) p:nth-child(4){
+									display: none; 
+								}
+							</style>
+						";
                 }
                 ?>
             </p>

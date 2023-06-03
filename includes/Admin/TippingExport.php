@@ -40,7 +40,7 @@ class TippingExport {
             if ( $tips ) {
 
                 header('Content-type: text/csv');
-                header('Content-Disposition: attachment; filename="give-tipping-lists.csv"');
+                header('Content-Disposition: attachment; filename="give-tipping-list.csv"');
                 header('Pragma: no-cache');
                 header('Expires: 0');
       
@@ -56,6 +56,9 @@ class TippingExport {
                     $donor = give_get_meta( $donation_id, '_give_donor_billing_first_name', true ) .' '. give_get_meta( $donation_id, '_give_donor_billing_last_name', true );
                     $payment_total = (float) give_get_meta( $donation_id, '_give_payment_total', true );
                     $tip_total = (float) give_get_meta( $donation_id, '_give_tip_amount', true );
+                    if( empty($tip_total) ){
+                        continue; 
+                    }
                     
                     $donation = 0;
                     if( is_numeric( $payment_total ) && is_numeric( $tip_total ) ) {

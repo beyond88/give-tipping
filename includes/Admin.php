@@ -13,7 +13,7 @@ class Admin {
         new Admin\Menu();
         new Admin\TippingExport();
         new Admin\Tipping();
-
+        // Admin\Tipping::instance()->init();
     }
 
     /**

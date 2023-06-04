@@ -192,7 +192,7 @@ class TippingList extends \WP_List_Table {
         $sortable = $this->get_sortable_columns();
         $hidden = $this->get_hidden_columns();
         $this->process_bulk_action();
-        $data = $this->query_tippings();
+        $data = (array) $this->query_tippings();
         
         $totalitems = count($data);
         $user = get_current_user_id();

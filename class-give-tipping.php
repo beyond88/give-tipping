@@ -139,11 +139,11 @@ final class Give_Tipping {
             new Give_Tipping\Ajax();
         }
 
-        if ( is_admin() ) {
-            new Give_Tipping\Admin();
-        } else {
-            new Give_Tipping\Frontend();
-        }
+        //if ( is_admin() ) {
+        new Give_Tipping\Admin();
+        //} else {
+        new Give_Tipping\Frontend();
+        //}
 
         new Give_Tipping\API();
     }

@@ -1,43 +1,44 @@
 <?php 
 namespace Give_Tipping\Admin;
 use Give_Tipping\Helpers;
+// use Give_Tipping\Traits\Singleton;
+
 
 class Tipping {
 
+	// use Singleton;
     /**
      * Initialize the class
      */
     public function __construct() {
 
-        add_action( 'admin_footer', [ $this, 'remove_similar_messsage'] );
 		add_action( 'give_donation_details_thead_after', [ $this, 'donation_detail' ], PHP_INT_MAX, 1 );
         // Hook update donation payment.
 		add_action( 'give_view_donation_details_totals_after', [ $this, 'show_fee_order_detail' ], 10, 1 );
 
-        // Override Give Email tags.
-		add_action( 'give_add_email_tags', array( $this, 'email_tags' ), 99999999 );
-
+		// Override Give Email tags.
+		add_action( 'give_add_email_tags', array( $this, 'modify_email_tags' ), 9999999 );
         // Modify amount tag for Preview when Give core >= 2.0 .
 		add_filter( 'give_email_tag_amount', array( $this, 'preview_amount_tag' ), PHP_INT_MAX, 2 );
 
     }
 
-    /**
-     * Remove similar message
-     * 
+	public function init() {
+        // Override Give Email tags.
+        //add_action( 'after_setup_theme', [ $this, 'overriding_target_methods' ], 3 );
+		add_action( 'give_add_email_tags', array( $this, 'modify_email_tags' ), 9999999 );
+	}
+	
+	/**
+     * Overriding target methods
+     *
      * @param none
      * @return void
      * 
      */
-    public function remove_similar_messsage() {
-        ?>
-        <style>
-            /* #give-donation-overview .inside .column-container div:nth-child(3) p:nth-child(4){
-                display: none; 
-            } */
-        </style>
-        <?php
-    }
+	public function overriding_target_methods() {
+		remove_action( 'give_add_email_tags', array( $this, 'modify_email_tags' ), 999999 );
+	}
 
 	/**
 	 * Checks if the Recurring Addon is active or not.
@@ -287,7 +288,7 @@ class Tipping {
 	 * @since  1.1.0
 	 * @access public
 	 */
-	public function email_tags() {
+	public function modify_email_tags() {
 
 		// Remove amount email tag.
 		give_remove_email_tag( 'amount' );
@@ -296,7 +297,7 @@ class Tipping {
 		give_add_email_tag(
 			'amount', __( 'The total donation amount with currency sign.', 'give-tipping' ), array(
 				$this,
-				'give_fee_email_tag_amount',
+				'give_fee_tip_email_tag_amount',
 			)
 		);
 	}
@@ -310,7 +311,7 @@ class Tipping {
 	 *
 	 * @return string
 	 */
-	function give_fee_email_tag_amount( $tag_args ) {
+	function give_fee_tip_email_tag_amount( $tag_args ) {
 
 		// Backward compatibility.
 		$payment_id = $tag_args;
@@ -319,7 +320,7 @@ class Tipping {
 		}
 
 		// Get Fee Recovery amount string.
-		$give_amount = $this->fee_amount_string( $payment_id );
+		$give_amount = $this->fee_tip_amount_string( $payment_id );
 
 		return html_entity_decode( $give_amount, ENT_COMPAT, 'UTF-8' );
 
@@ -334,7 +335,7 @@ class Tipping {
 	 *
 	 * @return string
 	 */
-	function fee_amount_string( $donation_id ) {
+	function fee_tip_amount_string( $donation_id ) {
 
 		// Define required variables.
 		$currency_code   = give_get_payment_currency_code( $donation_id );
@@ -358,7 +359,7 @@ class Tipping {
 
 		if ( ! empty( $fee_amount ) && ! empty( $tip_amount ) ) {
 
-			$donation_amount = ($donation_amount - $tip_amount); 
+			$donation_amount = ($donation_total - $tip_amount) - $fee_amount; 
 
 			$donation_amount =
 				give_currency_filter(
@@ -454,7 +455,7 @@ class Tipping {
 
 			// Update final donation amount with fees breakdown.
 			$final_donation_amount = sprintf(
-				__( '%1$s (%2$s donation + %3$s for fees)', 'give-fee-recovery' ),
+				__( '%1$s (%2$s donation + %3$s for fees)', 'give-tipping' ),
 				$final_donation_amount,
 				$donation_amount,
 				$fee_amount
@@ -493,7 +494,7 @@ class Tipping {
 
 			// Update final donation amount with fees breakdown.
 			$final_donation_amount = sprintf(
-				__( '%1$s (%2$s donation + %3$s for tips)', 'give-fee-recovery' ),
+				__( '%1$s (%2$s donation + %3$s for tips)', 'give-tipping' ),
 				$final_donation_amount,
 				$donation_amount,
 				$tip_amount
@@ -536,7 +537,7 @@ class Tipping {
 		if ( isset( $tag_args['payment_id'] ) && ! empty( $tag_args['payment_id'] ) ) {
 			$payment_id = $tag_args['payment_id'];
 
-			$give_amount = $this->fee_amount_string( $payment_id );
+			$give_amount = $this->fee_tip_amount_string( $payment_id );
 
 			$amount = html_entity_decode( $give_amount, ENT_COMPAT, 'UTF-8' );
 		}

@@ -27,8 +27,12 @@
 	<file>.</file>
 
 	<!-- WordPress -->
-    <rule ref="WordPress"/>
-	<!-- <rule ref="WordPressVIPMinimum"/>
-	<rule ref="WordPress-Extra"/> -->
+    <rule ref="WordPress">
+        <exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine" />
+        <exclude name="Squiz.Operators.ValidLogicalOperators.NotAllowed" />
+    </rule>
+	
+	<!-- <rule ref="WordPressVIPMinimum"/> -->
+	<rule ref="WordPress-Extra"/>
 	<rule ref="PSR2.Methods.FunctionClosingBrace"/>
 </ruleset>
